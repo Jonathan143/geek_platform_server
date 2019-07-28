@@ -1,0 +1,24 @@
+{
+  "name": "geek_platform_server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "nodemon": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jonathan143",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
+    "moment": "^2.24.0",
+    "mongoose": "^5.6.7"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
