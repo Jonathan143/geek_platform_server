@@ -4,16 +4,22 @@ const Koa = require('koa')
 const app = new Koa()
 const bodyParser = require('koa-bodyparser')
 const cors = require('./middlewares/koa-cors')
+const logger = require('koa-logger')
 const config = require('./config')
+const koaBody = require('koa-body')
 
 app.use(bodyParser())
 
+app.use(
+  koaBody({
+    multipart: true,
+    formidable: {
+      maxFileSize: 200 * 1024 * 1024 // 设置上传文件大小最大限制，默认2M
+    }
+  })
+)
 // logger
-app.use(async (ctx, next) => {
-  await next()
-  const rt = ctx.response.get('X-Response-Time')
-  console.log(`${ctx.method} ${ctx.url} - ${rt}`)
-})
+app.use(logger())
 
 // cors
 app.use(
@@ -29,19 +35,12 @@ app.use(
   })
 )
 
-// x-response-time
-app.use(async (ctx, next) => {
-  const start = Date.now()
-  await next()
-  const ms = Date.now() - start
-  ctx.set('X-Response-Time', `${ms}ms`)
-})
+app.use(require('koa-static')(__dirname + '/public'))
 
 // routes
-// app.use(router.routes()).use(router.allowedMethods())
 require('./routesLoader')(app, __dirname + '/routes')
 
-const PORT = process.env.PORT || config.SERVER_PORT
+const PORT = config.SERVER_PORT
 
 app.listen(PORT, () => {
   console.log(`server running @ http://localhost:${PORT}`)
