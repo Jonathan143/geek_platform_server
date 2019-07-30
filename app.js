@@ -7,6 +7,8 @@ const cors = require('./middlewares/koa-cors')
 const logger = require('koa-logger')
 const config = require('./config')
 const koaBody = require('koa-body')
+const helmet = require('koa-helmet')
+const apiError = require('./middlewares/apiError')
 
 app.use(bodyParser())
 
@@ -18,9 +20,6 @@ app.use(
     }
   })
 )
-// logger
-app.use(logger())
-
 // cors
 app.use(
   cors({
@@ -34,8 +33,11 @@ app.use(
     allowHeaders: ['Content-Type', 'Authorization', 'Accept']
   })
 )
-
+// logger
+app.use(logger())
+app.use(helmet())
 app.use(require('koa-static')(__dirname + '/public'))
+app.use(apiError)
 
 // routes
 require('./routesLoader')(app, __dirname + '/routes')
