@@ -4,5 +4,10 @@ module.exports = {
   // mongodb host
   MONGODB_HOST: 'mongodb://localhost',
   // jsonwebtoken 加密用的 key
-  SECRET_KEY: '0'
+  SECRET_KEY: '0',
+
+  // 腾讯云COS 密钥ID
+  SecretId: '',
+  // 腾讯云COS 密钥KEY
+  SecretKey: ''
 }

@@ -1,6 +1,6 @@
-const sleep = async ms => {
+module.exports = async ms => {
   return new Promise(resolve => {
-    setTimeout(() => {
+    timmer = setTimeout(() => {
       resolve(true)
     }, ms)
   })
