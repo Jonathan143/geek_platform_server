@@ -1,5 +1,6 @@
 const config = require('../config')
 const moment = require('moment')
+const fs = require('fs')
 
 const COS = require('cos-nodejs-sdk-v5')
 const cos = new COS({
