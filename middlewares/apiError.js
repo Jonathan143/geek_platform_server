@@ -4,13 +4,13 @@ module.exports = async (ctx, next) => {
   if (body && body.error) {
     ctx.status = 500
     ctx.body = {
-      data: body.error,
+      message: body.error,
       code: ctx.status
     }
   } else if (!body) {
     ctx.status = 404
     ctx.body = {
-      data: `Cannot ${ctx.method} ${ctx.path}`,
+      message: `Cannot ${ctx.method} ${ctx.path}`,
       code: ctx.status
     }
   } else {

@@ -3,12 +3,13 @@
 const Koa = require('koa')
 const app = new Koa()
 const bodyParser = require('koa-bodyparser')
-const cors = require('./middlewares/koa-cors')
+const cors = require('kcors')
 const logger = require('koa-logger')
 const config = require('./config')
 const koaBody = require('koa-body')
 const helmet = require('koa-helmet')
 const apiError = require('./middlewares/apiError')
+const security = require('./middlewares/security')
 
 app.use(bodyParser())
 
@@ -23,20 +24,18 @@ app.use(
 // cors
 app.use(
   cors({
-    origin: function(ctx) {
-      return '*'
-    },
-    exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
-    maxAge: 5,
-    credentials: true,
-    allowMethods: ['GET', 'POST', 'DELETE'],
-    allowHeaders: ['Content-Type', 'Authorization', 'Accept']
+    origin: ctx => ctx.header.origin,
+    optionsSuccessStatus: 200,
+    credentials: true // 是否带cookie
   })
 )
 // logger
 app.use(logger())
 app.use(helmet())
 app.use(require('koa-static')(__dirname + '/public'))
+// 接口安全
+app.use(security)
+// 接口异常返回处理
 app.use(apiError)
 
 // routes

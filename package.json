@@ -12,6 +12,8 @@
   "dependencies": {
     "axios": "^0.19.0",
     "cos-nodejs-sdk-v5": "^2.5.9",
+    "jsonwebtoken": "^8.5.1",
+    "kcors": "^2.2.2",
     "koa": "^2.7.0",
     "koa-body": "^4.1.0",
     "koa-bodyparser": "^4.2.1",
