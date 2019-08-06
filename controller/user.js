@@ -1,10 +1,25 @@
-// controller/user.js
+const config = require('../config')
+const jwt = require('jsonwebtoken')
 
 module.exports = {
   // 登录
   login(ctx) {
-    ctx.body = {
-      username: ctx.request.body.username
+    const { username, password } = ctx.request.body
+    if (username === 'ad') {
+      const id = 1
+      const token = jwt.sign({ id }, config.SECRET_KEY, {
+        expiresIn: '5 days'
+      })
+      ctx.body = {
+        id,
+        username,
+        token
+      }
+    } else {
+      ctx.status = 401
+      ctx.body = {
+        error: 'password is wrong.'
+      }
     }
   },
 

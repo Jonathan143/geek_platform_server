@@ -2,7 +2,7 @@ module.exports = async (ctx, next) => {
   await next()
   const body = ctx.body
   if (body && body.error) {
-    ctx.status = 500
+    ctx.status = ctx.status === 401 ? 401 : 500
     ctx.body = {
       message: body.error,
       code: ctx.status
