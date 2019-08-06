@@ -2,7 +2,7 @@
 
 const Koa = require('koa')
 const app = new Koa()
-const bodyParser = require('koa-bodyparser')
+// const bodyParser = require('koa-bodyparser')
 const cors = require('kcors')
 const logger = require('koa-logger')
 const config = require('./config')
@@ -11,7 +11,7 @@ const helmet = require('koa-helmet')
 const apiError = require('./middlewares/apiError')
 const security = require('./middlewares/security')
 
-app.use(bodyParser())
+// app.use(bodyParser())
 
 app.use(
   koaBody({
@@ -34,7 +34,7 @@ app.use(logger())
 app.use(helmet())
 app.use(require('koa-static')(__dirname + '/public'))
 // 接口安全
-app.use(security)
+// app.use(security)
 // 接口异常返回处理
 app.use(apiError)
 
