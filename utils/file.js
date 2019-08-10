@@ -53,4 +53,15 @@ const formatFileSize = size => {
   return size.toFixed(2) + unitList[i]
 }
 
-module.exports = { listDir, formatFileSize }
+const mkdirsSync = async dirname => {
+  if (require('fs').existsSync(dirname)) {
+    return true
+  } else {
+    if (await mkdirsSync(pth.dirname(dirname))) {
+      await fsp.mkdir(dirname)
+      return true
+    }
+  }
+}
+
+module.exports = { listDir, formatFileSize, mkdirsSync }

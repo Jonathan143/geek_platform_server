@@ -1,7 +1,12 @@
 const $callApi = require('../api')
 const cheerio = require('cheerio')
+const fs = require('fs')
+const fsp = fs.promises
+const path = require('path')
+const { mkdirsSync } = require('../utils/file')
 
-const baseUrl = 'https://www.mzitu.com/'
+const baseUrl = 'https://www.mzitu.com'
+const staticUrl = `http://localhost:${require('../config').SERVER_PORT}/mzitu/`
 
 /**
  *
@@ -19,9 +24,23 @@ const baseUrl = 'https://www.mzitu.com/'
 const getHome = async ctx => {
   const { page, type } = ctx.query
   await $callApi({
-    api: `${baseUrl}${type ? `/${type}/` : ''}${
-      page === 1 ? '' : 'page/' + page
-    }`,
+    api: `${baseUrl}${type ? `/${type}` : ''}${setPage(page)}`,
+    param: {}
+  }).then(async data => {
+    ctx.body = await getCoverList(data)
+  })
+}
+
+/**
+ *
+ * @param {String} content 搜索内容
+ */
+const search = async ctx => {
+  const { content, page } = ctx.query
+  await $callApi({
+    api: `${baseUrl}${
+      content === undefined ? '' : `/search/${content}`
+    }${setPage(page)}`,
     param: {}
   }).then(async data => {
     ctx.body = await getCoverList(data)
@@ -34,7 +53,7 @@ const getCoverList = async data => {
   $('#pins li>a').each(async (i, e) => {
     let obj = {
       name: e.children[0].attribs.alt, //标题
-      coverUrl: e.children[0].attribs.src, //封面图
+      coverUrl: e.children[0].attribs['data-original'], //封面图
       url: e.attribs.href, //图片网页的url
       date: $(e)
         .siblings('.time')
@@ -42,7 +61,6 @@ const getCoverList = async data => {
     }
     list.push(obj) //输出目录页查询出来的所有链接地址
   })
-  getAllPicUrl(list[0].url)
   return list
 }
 
@@ -70,6 +88,9 @@ const getAllPicUrl = async ctx => {
   })
 }
 
+const setPage = page =>
+  page === undefined || page === 1 ? '' : `/page/${page}`
+
 const sleep = async ms => {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -78,7 +99,61 @@ const sleep = async ms => {
   })
 }
 
+const download = async ctx => {
+  let { urls, name } = ctx.request.body
+  await mkdirsSync(path.join(__dirname, `../public/mzitu/${name}`))
+
+  ctx.body = await downloadAll(urls.split(','), name)
+}
+
+const downloadAll = async (urlList, name) => {
+  let list = []
+  for (const url of urlList) {
+    const fileName = url.match('[^/]+(?!.*/)')[0]
+    if (
+      !fs.existsSync(
+        path.join(__dirname, `../public/mzitu/${name}/${fileName}`)
+      )
+    ) {
+      const writeStream = fs.createWriteStream(
+        `./public/mzitu/${name}/${fileName}`
+      )
+      await downloadApi(url).then(async data => {
+        await data.pipe(writeStream)
+      })
+    }
+    list.push(`${staticUrl}${name}/${fileName}`)
+  }
+
+  return list
+}
+
+const downloadApi = url => {
+  return $callApi({
+    api: url,
+    config: {
+      responseType: 'stream',
+      headers: {
+        Accept:
+          'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Encoding': 'gzip, deflate',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+        'Cache-Control': 'no-cache',
+        Host: 'i.meizitu.net',
+        Pragma: 'no-cache',
+        'Proxy-Connection': 'keep-alive',
+        Referer: url,
+        'Upgrade-Insecure-Requests': 1,
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.19 Safari/537.36'
+      }
+    } //反防盗链
+  })
+}
+
 module.exports = {
   getHome,
-  getAllPicUrl
+  getAllPicUrl,
+  search,
+  download
 }
