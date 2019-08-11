@@ -7,6 +7,7 @@ module.exports = {
   async getFile(ctx) {
     const { path } = ctx.query
     const result = await fileUtil.listDir(path)
+    if (result.error) ctx.status = 500
     ctx.body = result
   },
 

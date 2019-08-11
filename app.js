@@ -36,7 +36,7 @@ app.use(require('koa-static')(__dirname + '/public'))
 // 接口安全
 app.use(security)
 // 接口异常返回处理
-// app.use(apiError)
+app.use(apiError)
 
 // routes
 require('./routesLoader')(app, __dirname + '/routes')

@@ -30,5 +30,26 @@ module.exports = {
       sex: 'man',
       age: 999
     }
+  },
+
+  getUserMenuList(ctx) {
+    ctx.body = [
+      {
+        id: 0,
+        route: {
+          name: 'home'
+        },
+        icon: 'el-icon-s-data',
+        title: '概览'
+      },
+      {
+        id: 1,
+        route: {
+          name: 'mzitu'
+        },
+        icon: 'el-icon-picture',
+        title: '妹子图'
+      }
+    ]
   }
 }

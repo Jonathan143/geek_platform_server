@@ -18,13 +18,25 @@ module.exports = async (ctx, next) => {
 
   const auth = ctx.cookies.get('token')
   if (!auth) {
-    return ctx.throw(401, 'Unauthorized.')
+    return ctx.throw(
+      401,
+      JSON.stringify({
+        code: 401,
+        message: '未登录'
+      })
+    )
   }
   let user = {}
   try {
     user = jwt.verify(auth, config.SECRET_KEY)
   } catch (error) {
-    return ctx.throw(403, 'Invalid token.')
+    return ctx.throw(
+      403,
+      JSON.stringify({
+        code: 403,
+        message: '登录过期'
+      })
+    )
   }
   ctx.currentUser = user
   await next()

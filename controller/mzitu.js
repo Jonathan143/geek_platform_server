@@ -110,14 +110,11 @@ const downloadAll = async (urlList, name) => {
   let list = []
   for (const url of urlList) {
     const fileName = url.match('[^/]+(?!.*/)')[0]
-    if (
-      !fs.existsSync(
-        path.join(__dirname, `../public/mzitu/${name}/${fileName}`)
-      )
-    ) {
-      const writeStream = fs.createWriteStream(
-        `./public/mzitu/${name}/${fileName}`
-      )
+    const filePath = `/public/mzitu/${name}/${fileName}`
+
+    if (!fs.existsSync(path.join(__dirname, `..${filePath}`))) {
+      const writeStream = fs.createWriteStream(`.${filePath}`)
+
       await downloadApi(url).then(async data => {
         await data.pipe(writeStream)
       })

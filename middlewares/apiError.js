@@ -1,22 +1,28 @@
 module.exports = async (ctx, next) => {
   await next()
   const body = ctx.body
-  if (body && body.error) {
-    ctx.status = ctx.status === 401 ? 401 : 500
-    ctx.body = {
-      message: body.error,
-      code: ctx.status
-    }
-  } else if (!body) {
-    ctx.status = 404
-    ctx.body = {
-      message: `Cannot ${ctx.method} ${ctx.path}`,
-      code: ctx.status
-    }
-  } else {
-    ctx.body = {
-      data: body,
-      code: ctx.status
-    }
+  const status = ctx.status
+
+  switch (status) {
+    case 404:
+      ctx.body = {
+        code: status,
+        message: `Cannot ${ctx.method} ${ctx.path}`
+      }
+      break
+    case 500:
+      ctx.body = {
+        code: status,
+        message: body.error || body.message
+      }
+      break
+    default:
+      ctx.body = {
+        data: body,
+        code: status,
+        message: 'success'
+      }
+
+      break
   }
 }
