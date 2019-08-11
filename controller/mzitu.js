@@ -4,6 +4,8 @@ const fs = require('fs')
 const fsp = fs.promises
 const path = require('path')
 const { mkdirsSync } = require('../utils/file')
+const qs = require('querystring')
+const fileUtil = require('../utils/file')
 
 const baseUrl = 'https://www.mzitu.com'
 const staticUrl = `http://localhost:${require('../config').SERVER_PORT}/mzitu/`
@@ -22,13 +24,35 @@ const staticUrl = `http://localhost:${require('../config').SERVER_PORT}/mzitu/`
  * @jiepai 街拍
  */
 const getHome = async ctx => {
-  const { page, type } = ctx.query
+  const { page, type, content } = ctx.query
+  console.log(content)
+
   await $callApi({
-    api: `${baseUrl}${type ? `/${type}` : ''}${setPage(page)}`,
+    api: `${baseUrl}${
+      content === undefined || content === ''
+        ? type
+          ? `/${type}`
+          : ''
+        : `/search/${qs.escape(content)}`
+    }${setPage(page)}`,
     param: {}
   }).then(async data => {
     ctx.body = await getCoverList(data)
   })
+}
+
+const getCategoryList = async ctx => {
+  ctx.body = [
+    { value: '', label: '最新' },
+    { value: 'hot', label: '最热' },
+    { value: 'best', label: '推荐' },
+    { value: 'xinggan', label: '性感妹子' },
+    { value: 'japan', label: '日本妹子' },
+    { value: 'taiwan', label: '台湾妹子' },
+    { value: 'mm', label: '清纯妹子' },
+    { value: 'zipai', label: '妹子自拍' },
+    { value: 'jiepai', label: '妹子街拍' }
+  ]
 }
 
 /**
@@ -148,9 +172,19 @@ const downloadApi = url => {
   })
 }
 
+const getAllDownloadFile = async ctx => {
+  const { filePath } = ctx.query
+  const result = await fileUtil.listDir(
+    path.join(__dirname, `../public/mzitu/${filePath ? filePath : ''}`)
+  )
+  ctx.body = result
+}
+
 module.exports = {
   getHome,
   getAllPicUrl,
   search,
-  download
+  download,
+  getCategoryList,
+  getAllDownloadFile
 }

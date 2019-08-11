@@ -5,6 +5,8 @@ module.exports = {
   MONGODB_HOST: 'mongodb://localhost',
   // jsonwebtoken 加密用的 key
   SECRET_KEY: '0',
+  // 项目当前目录
+  basePath: __dirname,
 
   // 腾讯云COS 密钥ID
   SecretId: '',

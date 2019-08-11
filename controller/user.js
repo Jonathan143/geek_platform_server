@@ -5,7 +5,7 @@ module.exports = {
   // 登录
   login(ctx) {
     const { username, password } = ctx.request.body
-    if (username === 'ad') {
+    if (username === 'jonathan') {
       const id = 1
       const token = jwt.sign({ id }, config.SECRET_KEY, {
         expiresIn: '5 days'

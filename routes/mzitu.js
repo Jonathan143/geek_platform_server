@@ -14,4 +14,8 @@ router.get('/picurl', mzitu.getAllPicUrl)
 
 router.post('/download', mzitu.download)
 
+router.get('/get_all_download_file', mzitu.getAllDownloadFile)
+
+router.get('/get_category_list', mzitu.getCategoryList)
+
 module.exports = router
