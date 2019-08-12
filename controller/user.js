@@ -49,6 +49,14 @@ module.exports = {
         },
         icon: 'el-icon-picture',
         title: '妹子图'
+      },
+      {
+        id: 2,
+        route: {
+          name: 'file'
+        },
+        icon: 'el-icon-folder',
+        title: '文件'
       }
     ]
   }
