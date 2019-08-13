@@ -20,7 +20,7 @@ module.exports = async (ctx, next) => {
       ctx.body = {
         data: body,
         code: status,
-        message: 'success'
+        message: body.error || body.message || 'success'
       }
 
       break
