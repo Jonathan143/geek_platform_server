@@ -25,10 +25,10 @@ module.exports = {
     // 可读流通过管道写入可写流
     reader.pipe(upStream)
 
-    const PORT = require('../config').SERVER_PORT
+    const { SERVER_PORT, localhost } = require('../config')
     return (ctx.body = {
       fileName,
-      path: `http://localhost:${PORT}/upload/${fileName}`
+      path: `http://${localhost}:${SERVER_PORT}/upload/${fileName}`
     })
   }
 }

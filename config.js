@@ -7,6 +7,8 @@ module.exports = {
   SECRET_KEY: '0',
   // 项目当前目录
   basePath: __dirname,
+  // 修改为服务器ip 或者静态文件目录域名
+  localhost: 'localhost',
 
   // 腾讯云COS 密钥ID
   SecretId: '',

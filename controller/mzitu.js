@@ -6,9 +6,9 @@ const path = require('path')
 const { mkdirsSync } = require('../utils/file')
 const qs = require('querystring')
 const fileUtil = require('../utils/file')
-
+const { SERVER_PORT, localhost } = require('../config')
 const baseUrl = 'https://www.mzitu.com'
-const staticUrl = `http://localhost:${require('../config').SERVER_PORT}/mzitu/`
+const staticUrl = `http://${localhost}:${SERVER_PORT}/mzitu/`
 
 /**
  *
