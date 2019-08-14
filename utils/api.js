@@ -26,7 +26,7 @@ if (process.env.NODE_ENV === 'development') {
 const instance = axios.create({
   timeout: 1000 * 12,
   baseURL,
-  // withCredentials: true,
+  withCredentials: true,
   headers: {
     post: {
       'Content-Type': 'application/x-www-form-urlencoded'

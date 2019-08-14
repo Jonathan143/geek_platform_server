@@ -1,4 +1,4 @@
-const $callApi = require('../api')
+const $callApi = require('../utils/api')
 const cheerio = require('cheerio')
 const fs = require('fs')
 const fsp = fs.promises
@@ -102,7 +102,10 @@ const getAllPicUrl = async ctx => {
       total = $(page[page.length - 2]).text()
 
     for (let i = 1; i <= total; i++) {
-      srcList.push(`${baseSrcList[0]}${i < 10 ? '0' + i : i}.${baseSrcList[1]}`)
+      srcList.push({
+        pageUrl: `${url}/${i}`,
+        imageUrl: `${baseSrcList[0]}${i < 10 ? '0' + i : i}.${baseSrcList[1]}`
+      })
     }
     const picData = {
       total,
@@ -126,14 +129,13 @@ const sleep = async ms => {
 const download = async ctx => {
   let { urls, name } = ctx.request.body
   await mkdirsSync(path.join(__dirname, `../public/mzitu/${name}`))
-
-  ctx.body = await downloadAll(urls.split(','), name)
+  ctx.body = await downloadAll(urls, name)
 }
 
 const downloadAll = async (urlList, name) => {
   let list = []
   for (const url of urlList) {
-    const fileName = url.match('[^/]+(?!.*/)')[0]
+    const fileName = url.imageUrl.match('[^/]+(?!.*/)')[0]
     const filePath = `/public/mzitu/${name}/${fileName}`
 
     if (!fs.existsSync(path.join(__dirname, `..${filePath}`))) {
@@ -151,7 +153,7 @@ const downloadAll = async (urlList, name) => {
 
 const downloadApi = url => {
   return $callApi({
-    api: url,
+    api: url.imageUrl,
     config: {
       responseType: 'stream',
       headers: {
@@ -163,7 +165,7 @@ const downloadApi = url => {
         Host: 'i.meizitu.net',
         Pragma: 'no-cache',
         'Proxy-Connection': 'keep-alive',
-        Referer: url,
+        Referer: url.pageUrl,
         'Upgrade-Insecure-Requests': 1,
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.19 Safari/537.36'

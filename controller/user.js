@@ -16,7 +16,6 @@ module.exports = {
         token
       }
     } else {
-      ctx.status = 401
       ctx.body = {
         error: 'password is wrong.'
       }
