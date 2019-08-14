@@ -9,7 +9,7 @@
     "watch": true,
     "ignore_watch": ["node_modules", "logs", "public"],
     "exec_mode": "cluster_mode",
-    "instances": 4,
+    "instances": 1,
     "max_memory_restart": 8,
     "error_file": "./logs/app-err.log",
     "out_file": "./logs/app-out.log",
@@ -19,7 +19,7 @@
     "max_restarts": 30,
     "autorestart": true,
     "cron_restart": "",
-    "restart_delay": "60s",
+    "restart_delay": 60,
     "env": {
       "NODE_ENV": "production",
       "REMOTE_ADDR": "Jonathan"
