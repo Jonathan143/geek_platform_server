@@ -25,10 +25,10 @@ module.exports = {
     // 可读流通过管道写入可写流
     reader.pipe(upStream)
 
-    const { SERVER_PORT, localhost } = require('../config')
+    const { STATICURL } = require('../config')
     return (ctx.body = {
       fileName,
-      path: `http://${localhost}:${SERVER_PORT}/upload/${fileName}`
+      path: `${STATICURL}/upload/${fileName}`
     })
   }
 }

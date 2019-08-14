@@ -6,9 +6,9 @@ module.exports = {
   // jsonwebtoken 加密用的 key
   SECRET_KEY: '0',
   // 项目当前目录
-  basePath: __dirname,
+  BASEPATH: __dirname,
   // 修改为服务器ip 或者静态文件目录域名
-  localhost: 'localhost',
+  STATICURL: 'http://localhost:3200',
 
   // 腾讯云COS 密钥ID
   SecretId: '',
