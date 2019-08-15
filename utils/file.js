@@ -1,6 +1,7 @@
 // The fs.promises API is experimental
 const fsp = require('fs').promises
 const pth = require('path')
+const os = require('os')
 
 const getFileType = stats => {
   return stats.isDirectory() ? 'dir' : stats.isFile() ? 'file' : 'other'
@@ -13,6 +14,7 @@ const getFileType = stats => {
  * @param {Boolean} isToArray 返回数据类型 数组 对象
  */
 const listDir = async (path, displayHidden = false) => {
+  const userInfo = os.userInfo()
   try {
     await fsp.access(path)
     const filenameList = await fsp.readdir(path)
@@ -25,6 +27,11 @@ const listDir = async (path, displayHidden = false) => {
         const fileStats = await fsp.stat(pth.join(path, name))
         fileStats.type = getFileType(fileStats)
         fileStats.name = name
+        fileStats.owner = fileStats.uid
+          ? fileStats.uid === userInfo.uid
+            ? userInfo.username
+            : fileStats.uid
+          : 'root'
         fileList.push(fileStats)
       } catch (error) {}
     }
