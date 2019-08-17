@@ -27,11 +27,12 @@ const listDir = async (path, displayHidden = false) => {
         const fileStats = await fsp.stat(pth.join(path, name))
         fileStats.type = getFileType(fileStats)
         fileStats.name = name
-        fileStats.owner = fileStats.uid
-          ? fileStats.uid === userInfo.uid
-            ? userInfo.username
-            : fileStats.uid
-          : 'root'
+        fileStats.owner =
+          fileStats.uid !== 0
+            ? fileStats.uid === userInfo.uid
+              ? userInfo.username
+              : fileStats.uid
+            : 'root'
         fileList.push(fileStats)
       } catch (error) {}
     }

@@ -9,7 +9,7 @@ const fileUtil = require('../utils/file')
 const baseUrl = 'https://www.mzitu.com'
 const { STATICURL } = require('../config')
 const staticUrl = `${STATICURL}/mzitu/`
-
+const moment = require('moment')
 /**
  *
  * @param {String} type
@@ -25,19 +25,19 @@ const staticUrl = `${STATICURL}/mzitu/`
  */
 const getHome = async ctx => {
   const { page, type, content } = ctx.query
-  console.log(content)
+  const apiUrl = `${baseUrl}${
+    content === undefined || content === ''
+      ? type
+        ? `/${type}`
+        : ''
+      : `/search/${qs.escape(content)}`
+  }${setPage(page)}`
 
   await $callApi({
-    api: `${baseUrl}${
-      content === undefined || content === ''
-        ? type
-          ? `/${type}`
-          : ''
-        : `/search/${qs.escape(content)}`
-    }${setPage(page)}`,
+    api: apiUrl,
     param: {}
   }).then(async data => {
-    ctx.body = await getCoverList(data)
+    ctx.body = await getCoverList(data, apiUrl)
   })
 }
 
@@ -61,30 +61,37 @@ const getCategoryList = async ctx => {
  */
 const search = async ctx => {
   const { content, page } = ctx.query
+  const apiUrl = `${baseUrl}${
+    content === undefined ? '' : `/search/${content}`
+  }${setPage(page)}`
+
   await $callApi({
-    api: `${baseUrl}${
-      content === undefined ? '' : `/search/${content}`
-    }${setPage(page)}`,
+    api: apiUrl,
     param: {}
   }).then(async data => {
-    ctx.body = await getCoverList(data)
+    ctx.body = await getCoverList(data, apiUrl)
   })
 }
 
-const getCoverList = async data => {
+const getCoverList = async (data, apiUrl) => {
   const $ = cheerio.load(data)
   let list = []
   $('#pins li>a').each(async (i, e) => {
+    const cAttribs = e.children[0].attribs
     let obj = {
-      name: e.children[0].attribs.alt, //标题
-      coverUrl: e.children[0].attribs['data-original'], //封面图
+      name: cAttribs.alt, //标题
+      coverUrl: cAttribs['data-original'], //封面图
       url: e.attribs.href, //图片网页的url
       date: $(e)
         .siblings('.time')
         .text()
     }
+
     list.push(obj) //输出目录页查询出来的所有链接地址
   })
+  for (const i of list) {
+    i.coverUrl = await download({ apiUrl, ...i })
+  }
   return list
 }
 
@@ -126,17 +133,39 @@ const sleep = async ms => {
   })
 }
 
-const download = async ctx => {
-  let { urls, name } = ctx.request.body
-  await mkdirsSync(path.join(__dirname, `../public/mzitu/${name}`))
-  ctx.body = await downloadAll(urls, name)
+const formatDate = date => {
+  return moment(date).format('YYYY-MM')
 }
 
-const downloadAll = async (urlList, name) => {
+const download = async ({ coverUrl, name, date, apiUrl }) => {
+  const dirPath = `/public/mzitu/cover/${formatDate(date)}`
+  const fileName = name + coverUrl.match(/\.(\w+)$/)[0]
+
+  await mkdirsSync(path.join(__dirname, `..${dirPath}`))
+
+  if (!fs.existsSync(path.join(__dirname, `..${dirPath}/${fileName}`))) {
+    const writeStream = fs.createWriteStream(`.${dirPath}/${fileName}`)
+
+    await downloadApi({ imageUrl: coverUrl, pageUrl: apiUrl }).then(
+      async data => {
+        await data.pipe(writeStream)
+      }
+    )
+  }
+
+  return `${staticUrl}/cover/${formatDate(date)}/${fileName}`
+}
+
+const downloadAll = async ctx => {
+  let { urls, name, date } = ctx.request.body
   let list = []
-  for (const url of urlList) {
+  const fDate = formatDate(date)
+
+  await mkdirsSync(path.join(__dirname, `../public/mzitu/${fDate}/${name}`))
+
+  for (const url of urls) {
     const fileName = url.imageUrl.match('[^/]+(?!.*/)')[0]
-    const filePath = `/public/mzitu/${name}/${fileName}`
+    const filePath = `/public/mzitu/${fDate}/${name}/${fileName}`
 
     if (!fs.existsSync(path.join(__dirname, `..${filePath}`))) {
       const writeStream = fs.createWriteStream(`.${filePath}`)
@@ -145,15 +174,15 @@ const downloadAll = async (urlList, name) => {
         await data.pipe(writeStream)
       })
     }
-    list.push(`${staticUrl}${name}/${fileName}`)
+    list.push(`${staticUrl}${fDate}/${name}/${fileName}`)
   }
 
-  return list
+  ctx.body = list
 }
 
-const downloadApi = url => {
+const downloadApi = ({ imageUrl, pageUrl }) => {
   return $callApi({
-    api: url.imageUrl,
+    api: imageUrl,
     config: {
       responseType: 'stream',
       headers: {
@@ -165,7 +194,7 @@ const downloadApi = url => {
         Host: 'i.meizitu.net',
         Pragma: 'no-cache',
         'Proxy-Connection': 'keep-alive',
-        Referer: url.pageUrl,
+        Referer: pageUrl,
         'Upgrade-Insecure-Requests': 1,
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.19 Safari/537.36'
@@ -186,7 +215,7 @@ module.exports = {
   getHome,
   getAllPicUrl,
   search,
-  download,
+  downloadAll,
   getCategoryList,
   getAllDownloadFile
 }
