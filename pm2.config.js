@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'development_platform_server',
+      name: 'geek_platform_server',
       script: 'app.js',
       instances: 1,
       autorestart: true,
