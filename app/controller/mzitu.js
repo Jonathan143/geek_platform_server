@@ -1,13 +1,12 @@
 const $callApi = require('../utils/api')
 const cheerio = require('cheerio')
 const fs = require('fs')
-const fsp = fs.promises
 const path = require('path')
 const {mkdirsSync} = require('../utils/file')
 const qs = require('querystring')
 const fileUtil = require('../utils/file')
 const baseUrl = 'https://www.mzitu.com'
-const {STATICURL} = require('../../config')
+const {STATICURL, BASEPATH} = require('../../config')
 const staticUrl = `${STATICURL}/mzitu/`
 const moment = require('moment')
 /**
@@ -138,13 +137,13 @@ const formatDate = date => {
 }
 
 const download = async ({coverUrl, name, date, apiUrl}) => {
-  const dirPath = `/public/mzitu/cover/${formatDate(date)}`
+  const dirPath = `${BASEPATH}/public/mzitu/cover/${formatDate(date)}`
   const fileName = name + coverUrl.match(/\.(\w+)$/)[0]
 
-  await mkdirsSync(path.join(__dirname, `..${dirPath}`))
+  await mkdirsSync(dirPath)
 
-  if (!fs.existsSync(path.join(__dirname, `..${dirPath}/${fileName}`))) {
-    const writeStream = fs.createWriteStream(`.${dirPath}/${fileName}`)
+  if (!fs.existsSync(dirPath)) {
+    const writeStream = fs.createWriteStream(`${dirPath}/${fileName}`)
 
     await downloadApi({imageUrl: coverUrl, pageUrl: apiUrl}).then(
       async data => {
@@ -160,15 +159,16 @@ const downloadAll = async ctx => {
   let {urls, name, date} = ctx.request.body
   let list = []
   const fDate = formatDate(date)
+  const dirPath = `${BASEPATH}/public/mzitu/${fDate}/${name}`
 
-  await mkdirsSync(path.join(__dirname, `../public/mzitu/${fDate}/${name}`))
+  await mkdirsSync(dirPath)
 
   for (const url of urls) {
     const fileName = url.imageUrl.match('[^/]+(?!.*/)')[0]
-    const filePath = `/public/mzitu/${fDate}/${name}/${fileName}`
+    const filePath = `${dirPath}/${fileName}`
 
-    if (!fs.existsSync(path.join(__dirname, `..${filePath}`))) {
-      const writeStream = fs.createWriteStream(`.${filePath}`)
+    if (!fs.existsSync(filePath)) {
+      const writeStream = fs.createWriteStream(filePath)
 
       await downloadApi(url).then(async data => {
         await data.pipe(writeStream)
@@ -206,7 +206,7 @@ const downloadApi = ({imageUrl, pageUrl}) => {
 const getAllDownloadFile = async ctx => {
   const {filePath} = ctx.query
   const result = await fileUtil.listDir(
-    path.join(__dirname, `../public/mzitu/${filePath ? filePath : ''}`)
+    path.join(BASEPATH, `/public/mzitu/${filePath ? filePath : ''}`)
   )
   ctx.body = result
 }

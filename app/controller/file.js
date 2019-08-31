@@ -2,10 +2,11 @@ const fileUtil = require('../utils/file')
 const fs = require('fs')
 const path = require('path')
 const moment = require('moment')
+const {STATICURL, BASEPATH} = require('../../config')
 
 module.exports = {
   async getFile(ctx) {
-    const { path } = ctx.query
+    const {path} = ctx.query
     const result = await fileUtil.listDir(path)
     ctx.body = result
   },
@@ -17,7 +18,7 @@ module.exports = {
     // 创建可读流
     const reader = fs.createReadStream(file.path)
     const fileName = `${moment().format('YYYY-MM-DD')}_${file.name}`
-    let filePath = path.join(__dirname, '../public/upload/') + fileName
+    let filePath = `${BASEPATH}/pubilc/upload/${fileName}`
 
     // 创建可写流
     const upStream = fs.createWriteStream(filePath)
@@ -25,7 +26,6 @@ module.exports = {
     // 可读流通过管道写入可写流
     reader.pipe(upStream)
 
-    const { STATICURL } = require('../config')
     return (ctx.body = {
       fileName,
       path: `${STATICURL}/upload/${fileName}`
