@@ -8,8 +8,8 @@ const logger = require('koa-logger')
 const config = require('./config')
 const koaBody = require('koa-body')
 const helmet = require('koa-helmet')
-const apiError = require('./middlewares/apiError')
-const security = require('./middlewares/security')
+const apiError = require('./app/middlewares/apiError')
+const security = require('./app/middlewares/security')
 
 // app.use(bodyParser())
 
@@ -39,7 +39,7 @@ app.use(security)
 app.use(apiError)
 
 // routes
-require('./routesLoader')(app, __dirname + '/routes')
+require('./routesLoader')(app, __dirname + '/app/routes')
 
 const PORT = config.SERVER_PORT
 

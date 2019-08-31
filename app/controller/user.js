@@ -1,13 +1,13 @@
-const config = require('../config')
+const config = require('../../config')
 const jwt = require('jsonwebtoken')
 
 module.exports = {
   // 登录
   login(ctx) {
-    const { username, password } = ctx.request.body
+    const {username, password} = ctx.request.body
     if (username === 'jonathan') {
       const id = 1
-      const token = jwt.sign({ id }, config.SECRET_KEY, {
+      const token = jwt.sign({id}, config.SECRET_KEY, {
         expiresIn: '5 days'
       })
       ctx.body = {
@@ -38,7 +38,7 @@ module.exports = {
         route: {
           name: 'home'
         },
-        icon: 'el-icon-s-data',
+        fontClass: 'el-icon-s-data',
         title: '概览'
       },
       {
@@ -46,7 +46,7 @@ module.exports = {
         route: {
           name: 'mzitu'
         },
-        icon: 'el-icon-picture',
+        fontClass: 'el-icon-picture',
         title: '妹子图'
       },
       {
@@ -54,8 +54,16 @@ module.exports = {
         route: {
           name: 'file'
         },
-        icon: 'el-icon-folder',
+        icon: 'xiangmuguanli',
         title: '文件'
+      },
+      {
+        id: 3,
+        route: {
+          name: 'reptile'
+        },
+        icon: 'crawler',
+        title: '爬虫'
       }
     ]
   }

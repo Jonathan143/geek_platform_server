@@ -1,4 +1,4 @@
-const config = require('../config')
+const config = require('../../config')
 const moment = require('moment')
 const fs = require('fs')
 
@@ -28,7 +28,7 @@ module.exports = {
   },
 
   async getFileOnBecket(ctx) {
-    const { bucket, region, prefix = '' } = ctx.query
+    const {bucket, region, prefix = ''} = ctx.query
 
     await p('getBucket', {
       Bucket: bucket,
@@ -44,7 +44,7 @@ module.exports = {
   },
 
   async uploadFile(ctx) {
-    const { bucket, region, path } = ctx.request.body
+    const {bucket, region, path} = ctx.request.body
     // 上传单个文件
     const file = ctx.request.files.file // 获取上传文件
     const Key = `${moment().format('YYYY-MM-DD')}/${file.name}`
@@ -64,7 +64,7 @@ module.exports = {
   },
 
   async deleteFile(ctx) {
-    const { bucket, region, key } = ctx.query
+    const {bucket, region, key} = ctx.query
 
     await p('deleteObject', {
       Bucket: bucket,

@@ -1,8 +1,8 @@
 /* 安全性校验中间件 */
-const config = require('../config')
+const config = require('../../config')
 const jwt = require('jsonwebtoken')
 
-whitelist = [{ path: '/user/login$', method: 'post' }]
+whitelist = [{path: '/user/login$', method: 'post'}]
 
 const isInWhitelist = (path, method) => {
   const filterList = whitelist.filter(

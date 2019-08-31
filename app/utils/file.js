@@ -47,7 +47,7 @@ const listDir = async (path, displayHidden = false) => {
     if (err.message.includes('no such')) {
       error = `path: '${path}' is not exists`
     }
-    return { error: error || err.message }
+    return {error: error || err.message}
   }
 }
 
@@ -64,12 +64,11 @@ const formatFileSize = size => {
 const mkdirsSync = async dirname => {
   if (require('fs').existsSync(dirname)) {
     return true
-  } else {
-    if (await mkdirsSync(pth.dirname(dirname))) {
-      await fsp.mkdir(dirname)
-      return true
-    }
+  }
+  if (await mkdirsSync(pth.dirname(dirname))) {
+    await fsp.mkdir(dirname)
+    return true
   }
 }
 
-module.exports = { listDir, formatFileSize, mkdirsSync }
+module.exports = {listDir, formatFileSize, mkdirsSync}

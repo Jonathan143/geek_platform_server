@@ -3,11 +3,11 @@ const cheerio = require('cheerio')
 const fs = require('fs')
 const fsp = fs.promises
 const path = require('path')
-const { mkdirsSync } = require('../utils/file')
+const {mkdirsSync} = require('../utils/file')
 const qs = require('querystring')
 const fileUtil = require('../utils/file')
 const baseUrl = 'https://www.mzitu.com'
-const { STATICURL } = require('../config')
+const {STATICURL} = require('../../config')
 const staticUrl = `${STATICURL}/mzitu/`
 const moment = require('moment')
 /**
@@ -24,7 +24,7 @@ const moment = require('moment')
  * @jiepai 街拍
  */
 const getHome = async ctx => {
-  const { page, type, content } = ctx.query
+  const {page, type, content} = ctx.query
   const apiUrl = `${baseUrl}${
     content === undefined || content === ''
       ? type
@@ -43,15 +43,15 @@ const getHome = async ctx => {
 
 const getCategoryList = async ctx => {
   ctx.body = [
-    { value: '', label: '最新' },
-    { value: 'hot', label: '最热' },
-    { value: 'best', label: '推荐' },
-    { value: 'xinggan', label: '性感妹子' },
-    { value: 'japan', label: '日本妹子' },
-    { value: 'taiwan', label: '台湾妹子' },
-    { value: 'mm', label: '清纯妹子' },
-    { value: 'zipai', label: '妹子自拍' },
-    { value: 'jiepai', label: '妹子街拍' }
+    {value: '', label: '最新'},
+    {value: 'hot', label: '最热'},
+    {value: 'best', label: '推荐'},
+    {value: 'xinggan', label: '性感妹子'},
+    {value: 'japan', label: '日本妹子'},
+    {value: 'taiwan', label: '台湾妹子'},
+    {value: 'mm', label: '清纯妹子'},
+    {value: 'zipai', label: '妹子自拍'},
+    {value: 'jiepai', label: '妹子街拍'}
   ]
 }
 
@@ -60,7 +60,7 @@ const getCategoryList = async ctx => {
  * @param {String} content 搜索内容
  */
 const search = async ctx => {
-  const { content, page } = ctx.query
+  const {content, page} = ctx.query
   const apiUrl = `${baseUrl}${
     content === undefined ? '' : `/search/${content}`
   }${setPage(page)}`
@@ -90,13 +90,13 @@ const getCoverList = async (data, apiUrl) => {
     list.push(obj) //输出目录页查询出来的所有链接地址
   })
   for (const i of list) {
-    i.coverUrl = await download({ apiUrl, ...i })
+    i.coverUrl = await download({apiUrl, ...i})
   }
   return list
 }
 
 const getAllPicUrl = async ctx => {
-  const { url } = ctx.query
+  const {url} = ctx.query
   await $callApi({
     api: url,
     param: {}
@@ -137,7 +137,7 @@ const formatDate = date => {
   return moment(date).format('YYYY-MM')
 }
 
-const download = async ({ coverUrl, name, date, apiUrl }) => {
+const download = async ({coverUrl, name, date, apiUrl}) => {
   const dirPath = `/public/mzitu/cover/${formatDate(date)}`
   const fileName = name + coverUrl.match(/\.(\w+)$/)[0]
 
@@ -146,7 +146,7 @@ const download = async ({ coverUrl, name, date, apiUrl }) => {
   if (!fs.existsSync(path.join(__dirname, `..${dirPath}/${fileName}`))) {
     const writeStream = fs.createWriteStream(`.${dirPath}/${fileName}`)
 
-    await downloadApi({ imageUrl: coverUrl, pageUrl: apiUrl }).then(
+    await downloadApi({imageUrl: coverUrl, pageUrl: apiUrl}).then(
       async data => {
         await data.pipe(writeStream)
       }
@@ -157,7 +157,7 @@ const download = async ({ coverUrl, name, date, apiUrl }) => {
 }
 
 const downloadAll = async ctx => {
-  let { urls, name, date } = ctx.request.body
+  let {urls, name, date} = ctx.request.body
   let list = []
   const fDate = formatDate(date)
 
@@ -180,7 +180,7 @@ const downloadAll = async ctx => {
   ctx.body = list
 }
 
-const downloadApi = ({ imageUrl, pageUrl }) => {
+const downloadApi = ({imageUrl, pageUrl}) => {
   return $callApi({
     api: imageUrl,
     config: {
@@ -204,7 +204,7 @@ const downloadApi = ({ imageUrl, pageUrl }) => {
 }
 
 const getAllDownloadFile = async ctx => {
-  const { filePath } = ctx.query
+  const {filePath} = ctx.query
   const result = await fileUtil.listDir(
     path.join(__dirname, `../public/mzitu/${filePath ? filePath : ''}`)
   )
