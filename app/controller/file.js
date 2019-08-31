@@ -1,13 +1,22 @@
 const fileUtil = require('../utils/file')
 const fs = require('fs')
-const path = require('path')
 const moment = require('moment')
-const {STATICURL, BASEPATH} = require('../../config')
+const {STATICURL, BASEPATH} = global.config
 
 module.exports = {
   async getFile(ctx) {
     const {path} = ctx.query
     const result = await fileUtil.listDir(path)
+    const publicPath = `${BASEPATH}/public`
+
+    if (path.includes(publicPath) && result.file.length) {
+      const fileBasePath = path.replace(publicPath, '')
+
+      for (const file of result.file) {
+        file['url'] = `${STATICURL}${fileBasePath}${file.name}`
+      }
+    }
+
     ctx.body = result
   },
 

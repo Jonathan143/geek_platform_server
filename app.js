@@ -5,13 +5,17 @@ const app = new Koa()
 // const bodyParser = require('koa-bodyparser')
 const cors = require('kcors')
 const logger = require('koa-logger')
-const config = require('./config')
 const koaBody = require('koa-body')
 const helmet = require('koa-helmet')
 const apiError = require('./app/middlewares/apiError')
 const security = require('./app/middlewares/security')
 
 // app.use(bodyParser())
+// 全局注入配置
+global.config = require('./config')
+
+// Initialize the database 初始化数据库
+require('./app/database')
 
 app.use(
   koaBody({
@@ -41,8 +45,8 @@ app.use(apiError)
 // routes
 require('./routesLoader')(app, __dirname + '/app/routes')
 
-const PORT = config.SERVER_PORT
+const {SERVER_PORT} = global.config
 
-app.listen(PORT, () => {
-  console.log(`server running @ http://localhost:${PORT}`)
+app.listen(SERVER_PORT, () => {
+  console.log(`server running @ http://localhost:${SERVER_PORT}`)
 })

@@ -6,7 +6,7 @@ const {mkdirsSync} = require('../utils/file')
 const qs = require('querystring')
 const fileUtil = require('../utils/file')
 const baseUrl = 'https://www.mzitu.com'
-const {STATICURL, BASEPATH} = require('../../config')
+const {STATICURL, BASEPATH} = global.config
 const staticUrl = `${STATICURL}/mzitu/`
 const moment = require('moment')
 /**
@@ -123,14 +123,6 @@ const getAllPicUrl = async ctx => {
 
 const setPage = page =>
   page === undefined || page === 1 ? '' : `/page/${page}`
-
-const sleep = async ms => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(true)
-    }, ms)
-  })
-}
 
 const formatDate = date => {
   return moment(date).format('YYYY-MM')

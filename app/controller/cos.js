@@ -1,11 +1,11 @@
-const config = require('../../config')
 const moment = require('moment')
 const fs = require('fs')
 
 const COS = require('cos-nodejs-sdk-v5')
+const {SecretId, SecretKey} = global.config
 const cos = new COS({
-  SecretId: config.SecretId,
-  SecretKey: config.SecretKey
+  SecretId,
+  SecretKey
 })
 
 const p = (fn, option = null) => {

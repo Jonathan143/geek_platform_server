@@ -1,0 +1,30 @@
+[
+  {
+    "route": {
+      "name": "home"
+    },
+    "fontClass": "el-icon-s-data",
+    "title": "概览"
+  },
+  {
+    "route": {
+      "name": "mzitu"
+    },
+    "fontClass": "el-icon-picture",
+    "title": "妹子图"
+  },
+  {
+    "route": {
+      "name": "file"
+    },
+    "icon": "xiangmuguanli",
+    "title": "文件"
+  },
+  {
+    "route": {
+      "name": "reptile"
+    },
+    "icon": "crawler",
+    "title": "爬虫"
+  }
+]

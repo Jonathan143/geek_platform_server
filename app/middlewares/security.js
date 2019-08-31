@@ -1,5 +1,4 @@
 /* 安全性校验中间件 */
-const config = require('../../config')
 const jwt = require('jsonwebtoken')
 
 whitelist = [{path: '/user/login$', method: 'post'}]
@@ -28,7 +27,7 @@ module.exports = async (ctx, next) => {
   }
   let user = {}
   try {
-    user = jwt.verify(auth, config.SECRET_KEY)
+    user = jwt.verify(auth, global.config.SECRET_KEY)
   } catch (error) {
     return ctx.throw(
       403,

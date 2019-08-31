@@ -1,5 +1,6 @@
-const config = require('../../config')
 const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
+const Menu = mongoose.model('Menu')
 
 module.exports = {
   // 登录
@@ -7,7 +8,7 @@ module.exports = {
     const {username, password} = ctx.request.body
     if (username === 'jonathan') {
       const id = 1
-      const token = jwt.sign({id}, config.SECRET_KEY, {
+      const token = jwt.sign({id}, global.config.SECRET_KEY, {
         expiresIn: '5 days'
       })
       ctx.body = {
@@ -31,40 +32,8 @@ module.exports = {
     }
   },
 
-  getUserMenuList(ctx) {
-    ctx.body = [
-      {
-        id: 0,
-        route: {
-          name: 'home'
-        },
-        fontClass: 'el-icon-s-data',
-        title: '概览'
-      },
-      {
-        id: 1,
-        route: {
-          name: 'mzitu'
-        },
-        fontClass: 'el-icon-picture',
-        title: '妹子图'
-      },
-      {
-        id: 2,
-        route: {
-          name: 'file'
-        },
-        icon: 'xiangmuguanli',
-        title: '文件'
-      },
-      {
-        id: 3,
-        route: {
-          name: 'reptile'
-        },
-        icon: 'crawler',
-        title: '爬虫'
-      }
-    ]
+  async getUserMenuList(ctx) {
+    const menuList = await Menu.find({}).sort({_id: 1})
+    ctx.body = menuList
   }
 }
