@@ -24,6 +24,11 @@ module.exports = {
     }
   },
 
+  async findUserById(ctx) {
+    const result = await User.findUserById(ctx.query)
+    ctx.body = result
+  },
+
   async getUserMenuList(ctx) {
     const menuList = await Menu.find({}).sort({_id: 1})
     ctx.body = menuList

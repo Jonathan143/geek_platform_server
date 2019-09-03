@@ -88,8 +88,22 @@ const login = async function({username, password}) {
   return {error: 'password is wrong.'}
 }
 
+/**
+ * 根据 id 查询用户
+ * @param string id
+ * id 为空话则查询所有用户
+ */
+const findUserById = async function({id, hidePassword = true}) {
+  const option = hidePassword ? {password: 0, salt: 0} : {}
+  let user = id ? await this.findById(id, option) : await this.find({}, option)
+  if (!user) return {error: `id: ${id} is not found.`}
+
+  return user
+}
+
 Object.assign(UserSchema.statics, {
   register,
-  login
+  login,
+  findUserById
 })
 module.exports = mongoose.model('User', UserSchema)
