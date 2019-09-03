@@ -4,6 +4,7 @@ const mongoose = require('mongoose'),
 // const Role = require('./Role')
 const moment = require('moment')
 const encryption = require('../../utils/encryption')
+const jwt = require('jsonwebtoken')
 
 const UserSchema = new BaseSchema({
   // 用户名
@@ -62,7 +63,7 @@ const register = async function(inputUser) {
  */
 const login = async function({username, password}) {
   const user = await this.findOne({
-    $or: [{username}, {email: loginName}]
+    $or: [{username}, {email: username}]
   })
   if (!user) return {error: 'user is not exists.'}
 
@@ -70,11 +71,13 @@ const login = async function({username, password}) {
   if (user.password === result) {
     user.lastLoginDateTime = moment().format('YYYY-MM-DD HH:mm:ss')
     await user.save()
+    const {id} = user
     const token = jwt.sign({id}, global.config.SECRET_KEY, {
       expiresIn: '5 days'
     })
+
     return {
-      id: user.id,
+      id,
       username: user.username,
       nickname: user.nickname,
       role: user.role,

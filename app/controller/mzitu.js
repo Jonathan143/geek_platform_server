@@ -133,10 +133,9 @@ const download = async ({coverUrl, name, date, apiUrl}) => {
   const fileName = name + coverUrl.match(/\.(\w+)$/)[0]
 
   await mkdirsSync(dirPath)
-
-  if (!fs.existsSync(dirPath)) {
-    const writeStream = fs.createWriteStream(`${dirPath}/${fileName}`)
-
+  const filePath = `${dirPath}/${fileName}`
+  if (!fs.existsSync(filePath)) {
+    const writeStream = fs.createWriteStream(filePath)
     await downloadApi({imageUrl: coverUrl, pageUrl: apiUrl}).then(
       async data => {
         await data.pipe(writeStream)
