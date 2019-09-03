@@ -2,6 +2,7 @@ module.exports = async (ctx, next) => {
   await next()
   const body = ctx.body
   const status = ctx.status
+  const {message, error} = body
 
   switch (status) {
     case 404:
@@ -13,14 +14,15 @@ module.exports = async (ctx, next) => {
     case 500:
       ctx.body = {
         code: status,
-        message: body.error || body.message
+        message,
+        error
       }
       break
     default:
       ctx.body = {
         data: body,
         code: status,
-        message: body.error || body.message || 'success'
+        message: 'success'
       }
 
       break

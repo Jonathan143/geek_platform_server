@@ -15,7 +15,27 @@ db.on('open', async () => {
 })
 
 const Menu = require('./models/Menu')
+const Role = require('./models/Role')
+const User = require('./models/User')
+
+const registerSuperAdmin = async () => {
+  const role = await Role.findOne({tag: 'superadmin'})
+  const count = await User.countDocuments({role: role.id})
+  if (!count) {
+    const user = {
+      username: 'superadmin',
+      password: '1',
+      email: '1439821144@qq.com',
+      role: role.id,
+      nickname: '超级管理员'
+    }
+    await User.register(user)
+    console.log(user)
+  }
+}
 
 const initData = async () => {
   await Menu.initData()
+  await Role.initData()
+  await registerSuperAdmin()
 }
