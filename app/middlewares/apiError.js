@@ -22,7 +22,7 @@ module.exports = async (ctx, next) => {
       ctx.body = {
         data: body,
         code: status,
-        message: error || message ? undefined : 'success',
+        message: error ? undefined : 'success',
         error
       }
 
