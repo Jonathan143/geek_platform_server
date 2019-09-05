@@ -182,7 +182,7 @@ const downloadApi = ({imageUrl, pageUrl}) => {
         'Accept-Encoding': 'gzip, deflate',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
         'Cache-Control': 'no-cache',
-        Host: 'i.meizitu.net',
+        Host: 'i5.meizitu.net',
         Pragma: 'no-cache',
         'Proxy-Connection': 'keep-alive',
         Referer: pageUrl,
