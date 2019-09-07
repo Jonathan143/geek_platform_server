@@ -26,5 +26,12 @@
     },
     "icon": "crawler",
     "title": "爬虫"
+  },
+  {
+    "route": {
+      "name": "userManagement"
+    },
+    "fontClass": "el-icon-user",
+    "title": "用户权限"
   }
 ]

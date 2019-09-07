@@ -12,13 +12,19 @@ const UserSchema = new BaseSchema({
   // 昵称
   nickname: {type: String, trim: true, default: ''},
   // 邮箱
-  email: {type: String, trim: true},
+  email: {type: String, trim: true, default: ''},
+  // 头像
+  avatar: {
+    type: String,
+    default:
+      'https://img-1256555015.file.myqcloud.com/2019/04/03/5ca43fa6cceaa.png'
+  },
   // 密码 (AES 加密)
-  password: {type: String},
+  password: String,
   // 密码盐
-  salt: {type: String},
+  salt: String,
   // 身份
-  role: {type: ObjectId, ref: 'Role'},
+  role: {type: String, default: ''},
   // 创建日期
   createDateTime: {
     type: String,
@@ -41,16 +47,16 @@ const UserSchema = new BaseSchema({
  * @param inputUser :Object 输入的用户对象
  */
 const register = async function(inputUser) {
-  const {username, password, email, role, nickname} = inputUser
-  if (!username || !password || !email)
-    return {error: 'please input username, password or email.'}
+  const {username, password, email, role, nickname, avatar} = inputUser
+  if (!username || !password) return {error: 'please input username, password.'}
 
-  const users = await this.find({$or: [{username}, {email}]})
+  const findBy = email ? [{username}, {email}] : [{username}]
+  const users = await this.find({$or: findBy})
   if (users.length) return {error: 'username or email has been used.'}
 
   // 密码加密
   const {result, salt} = encryption.aesEncrypt(password)
-  const createUser = {username, password: result, email, salt}
+  const createUser = {username, password: result, email, salt, avatar}
   if (role) createUser.role = role
   if (nickname) createUser.nickname = nickname
 
@@ -71,17 +77,26 @@ const login = async function({username, password}) {
   if (user.password === result) {
     user.lastLoginDateTime = moment().format('YYYY-MM-DD HH:mm:ss')
     await user.save()
-    const {id} = user
+    const {
+      id,
+      username,
+      nickname,
+      role,
+      lastLoginDateTime,
+      avatar,
+      email
+    } = user
     const token = jwt.sign({id}, global.config.SECRET_KEY, {
       expiresIn: '5 days'
     })
-
     return {
       id,
-      username: user.username,
-      nickname: user.nickname,
-      role: user.role,
-      loginTime: user.lastLoginDateTime,
+      username,
+      nickname,
+      role,
+      lastLoginDateTime,
+      avatar,
+      email,
       token
     }
   }
