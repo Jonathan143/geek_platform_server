@@ -10,7 +10,7 @@ router.get('/bucket', cos.getBucket)
 router.get('/file', cos.getFileOnBecket)
 
 // 上传文件
-router.get('/upload', cos.uploadFile)
+router.post('/upload', cos.uploadFile)
 
 // 删除文件
 router.get('/delete', cos.deleteFile)

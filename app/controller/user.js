@@ -29,6 +29,11 @@ module.exports = {
     ctx.body = result
   },
 
+  async deleteUserById(ctx) {
+    const result = await User.deleteUserById(ctx.query)
+    ctx.body = result
+  },
+
   async getUserMenuList(ctx) {
     const menuList = await Menu.find({}).sort({_id: 1})
     ctx.body = menuList

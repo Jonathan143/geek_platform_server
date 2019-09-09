@@ -2,11 +2,12 @@ const moment = require('moment')
 const fs = require('fs')
 
 const COS = require('cos-nodejs-sdk-v5')
-const {SecretId, SecretKey} = global.config
+const {SecretId, SecretKey, DEFAULTSTORAGE, CDNURL} = global.config
 const cos = new COS({
   SecretId,
   SecretKey
 })
+const {Bucket, Region, cosUrl} = DEFAULTSTORAGE
 
 const p = (fn, option = null) => {
   return new Promise((resolve, reject) => {
@@ -28,7 +29,7 @@ module.exports = {
   },
 
   async getFileOnBecket(ctx) {
-    const {bucket, region, prefix = ''} = ctx.query
+    const {bucket = Bucket, region = Region, prefix = ''} = ctx.query
 
     await p('getBucket', {
       Bucket: bucket,
@@ -44,18 +45,23 @@ module.exports = {
   },
 
   async uploadFile(ctx) {
-    const {bucket, region, path} = ctx.request.body
+    const {
+      bucket = Bucket,
+      region = Region,
+      path = '/static'
+    } = ctx.request.body
     // 上传单个文件
     const file = ctx.request.files.file // 获取上传文件
-    const Key = `${moment().format('YYYY-MM-DD')}/${file.name}`
+    const filePath = `${moment().format('YYYY-MM-DD')}/${file.name}`
 
     await p('putObject', {
       Bucket: bucket,
       Region: region,
-      Key: path ? `${path}/${file.name}` : Key,
+      Key: `${path}/${filePath}`,
       Body: fs.createReadStream(file.path) // 这里传入前缀
     })
       .then(data => {
+        data.Location = data.Location.replace(cosUrl, CDNURL)
         ctx.body = data
       })
       .catch(error => {
@@ -64,7 +70,7 @@ module.exports = {
   },
 
   async deleteFile(ctx) {
-    const {bucket, region, key} = ctx.query
+    const {bucket = Bucket, region = Region, key} = ctx.query
 
     await p('deleteObject', {
       Bucket: bucket,

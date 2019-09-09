@@ -1,6 +1,5 @@
 const BaseSchema = require('./BaseSchema')
-const mongoose = require('mongoose'),
-  ObjectId = mongoose.Types.ObjectId
+const mongoose = require('mongoose')
 // const Role = require('./Role')
 const moment = require('moment')
 const encryption = require('../../utils/encryption')
@@ -116,9 +115,24 @@ const findUserById = async function({id, hidePassword = true}) {
   return user
 }
 
+/**
+ * 根据 id 删除用户
+ */
+const deleteUserById = async function({id, username}) {
+  let result = {}
+  try {
+    result = await this.findByIdAndDelete(id)
+  } catch (error) {
+    result.error = `delete ${username} fail.`
+  }
+
+  return result
+}
+
 Object.assign(UserSchema.statics, {
   register,
   login,
-  findUserById
+  findUserById,
+  deleteUserById
 })
 module.exports = mongoose.model('User', UserSchema)

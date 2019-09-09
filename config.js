@@ -13,5 +13,13 @@ module.exports = {
   // 腾讯云COS 密钥ID
   SecretId: '',
   // 腾讯云COS 密钥KEY
-  SecretKey: ''
+  SecretKey: '',
+  // 默认存储
+  DEFAULTSTORAGE: {
+    Bucket: '',
+    Region: '',
+    cosUrl: ''
+  },
+  // 对象存储加速域名
+  CDNURL: ''
 }
