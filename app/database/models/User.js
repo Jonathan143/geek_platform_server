@@ -121,9 +121,23 @@ const findUserById = async function({id, hidePassword = true}) {
 const deleteUserById = async function({id, username}) {
   let result = {}
   try {
-    result = await this.findByIdAndDelete(id)
+    result = await this.deleteOne({_id: id})
   } catch (error) {
     result.error = `delete ${username} fail.`
+  }
+
+  return result
+}
+
+/**
+ * 根据 id 更新用户信息
+ */
+const updateUserById = async function({id, username, ...info}) {
+  let result = {}
+  try {
+    result = await this.updateOne({_id: id}, info)
+  } catch (error) {
+    result.error = `update ${username} fail.`
   }
 
   return result
@@ -133,6 +147,7 @@ Object.assign(UserSchema.statics, {
   register,
   login,
   findUserById,
-  deleteUserById
+  deleteUserById,
+  updateUserById
 })
 module.exports = mongoose.model('User', UserSchema)

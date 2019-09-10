@@ -17,6 +17,9 @@ router.get('/find_user_by_id', user.findUserById)
 // 删除用户
 router.get('/delete_user_by_id', user.deleteUserById)
 
+// 更新用户
+router.get('/update_user_by_id', user.updateUserById)
+
 router.get('/menu_list', user.getUserMenuList)
 
 module.exports = router
