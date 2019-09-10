@@ -45,14 +45,12 @@ module.exports = {
   },
 
   async uploadFile(ctx) {
-    const {
-      bucket = Bucket,
-      region = Region,
-      path = '/static'
-    } = ctx.request.body
+    const {bucket = Bucket, region = Region, path = '/mzitu'} = ctx.request.body
     // 上传单个文件
     const file = ctx.request.files.file // 获取上传文件
-    const filePath = `${moment().format('YYYY-MM-DD')}/${file.name}`
+    const filePath = `${moment().format('YYYY-MM')}/${moment().format('DD')}/${
+      file.name
+    }`
 
     await p('putObject', {
       Bucket: bucket,
@@ -80,7 +78,7 @@ module.exports = {
   async uploadAndGetUrl({
     bucket = Bucket,
     region = Region,
-    path = '/static',
+    path = '/mzitu',
     filePath,
     stream
   }) {

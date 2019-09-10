@@ -25,7 +25,7 @@ const registerSuperAdmin = async () => {
       username: 'superadmin',
       password: '1',
       email: '1439821144@qq.com',
-      role: 'superadmin',
+      role: '5d6e62ab9a9c720d1845cc96',
       nickname: '超级管理员'
     }
     await User.register(user)

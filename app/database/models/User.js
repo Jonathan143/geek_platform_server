@@ -1,6 +1,7 @@
 const BaseSchema = require('./BaseSchema')
-const mongoose = require('mongoose')
-// const Role = require('./Role')
+const mongoose = require('mongoose'),
+  ObjectId = mongoose.Types.ObjectId
+const Role = require('./Role')
 const moment = require('moment')
 const encryption = require('../../utils/encryption')
 const jwt = require('jsonwebtoken')
@@ -23,7 +24,7 @@ const UserSchema = new BaseSchema({
   // 密码盐
   salt: String,
   // 身份
-  role: {type: String, default: ''},
+  role: {type: ObjectId, ref: 'Role'},
   // 创建日期
   createDateTime: {
     type: String,
@@ -109,7 +110,10 @@ const login = async function({username, password}) {
  */
 const findUserById = async function({id, hidePassword = true}) {
   const option = hidePassword ? {password: 0, salt: 0} : {}
-  let user = id ? await this.findById(id, option) : await this.find({}, option)
+  let user = await (id
+    ? this.findById(id, option)
+    : this.find({}, option)
+  ).populate('role')
   if (!user) return {error: `id: ${id} is not found.`}
 
   return user
@@ -130,14 +134,26 @@ const deleteUserById = async function({id, username}) {
 }
 
 /**
- * 根据 id 更新用户信息
+ * 根据 id 更新用户信息 | 新增用户
  */
-const updateUserById = async function({id, username, ...info}) {
+const updateUserById = async function({id, ...info}) {
   let result = {}
   try {
+    const {password, newPasswod} = info
+    if (password) {
+      const user = await this.findById(id)
+      const {psd} = encryption.aesEncrypt(password, user.salt)
+      if (user.password === psd && newPasswod) {
+        const {newPsd, salt} = encryption.aesEncrypt(newPasswod)
+        info.password = newPsd
+        info.salt = salt
+        delete info.newPasswod
+      }
+    }
+
     result = await this.updateOne({_id: id}, info)
   } catch (error) {
-    result.error = `update ${username} fail.`
+    result.error = `update ${info.username} fail.`
   }
 
   return result
