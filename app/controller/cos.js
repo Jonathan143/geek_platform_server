@@ -69,6 +69,34 @@ module.exports = {
       })
   },
 
+  /**
+   * 上传文件至腾讯云并且返回 url
+   * @param {String} bucket 存储桶名
+   * @param {String} region 存储桶位置
+   * @param {String} path 文件基本路径 默认 static
+   * @param {String} filePath 文件路径
+   * @param {Object} stream 文件流
+   */
+  async uploadAndGetUrl({
+    bucket = Bucket,
+    region = Region,
+    path = '/static',
+    filePath,
+    stream
+  }) {
+    try {
+      const data = await p('putObject', {
+        Bucket: bucket,
+        Region: region,
+        Key: `${path}/${filePath}`,
+        Body: stream // 这里传入前缀
+      })
+      return data.Location.replace(cosUrl, CDNURL)
+    } catch (error) {
+      console.error(error)
+    }
+  },
+
   async deleteFile(ctx) {
     const {bucket = Bucket, region = Region, key} = ctx.query
 

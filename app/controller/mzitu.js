@@ -2,9 +2,8 @@ const $callApi = require('../utils/api')
 const cheerio = require('cheerio')
 const fs = require('fs')
 const path = require('path')
-const {mkdirsSync} = require('../utils/file')
+const {mkdirsSync, listDir} = require('../utils/file')
 const qs = require('querystring')
-const fileUtil = require('../utils/file')
 const baseUrl = 'https://www.mzitu.com'
 const {STATICURL, BASEPATH} = global.config
 const staticUrl = `${STATICURL}/mzitu/`
@@ -196,7 +195,7 @@ const downloadApi = ({imageUrl, pageUrl}) => {
 
 const getAllDownloadFile = async ctx => {
   const {filePath} = ctx.query
-  const result = await fileUtil.listDir(
+  const result = await listDir(
     path.join(BASEPATH, `/public/mzitu/${filePath ? filePath : ''}`)
   )
   ctx.body = result

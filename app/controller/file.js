@@ -1,4 +1,4 @@
-const fileUtil = require('../utils/file')
+const {mkdirsSync, listDir} = require('../utils/file')
 const fs = require('fs')
 const moment = require('moment')
 const {STATICURL, BASEPATH} = global.config
@@ -8,7 +8,7 @@ module.exports = {
   async getFile(ctx) {
     const {path, security = false} = ctx.query
     const filePath = os.homedir() + (path === '/' ? '' : path)
-    const result = await fileUtil.listDir(security ? filePath : path)
+    const result = await listDir(security ? filePath : path)
     const publicPath = `${BASEPATH}/public`
 
     if (path.includes(publicPath) && result.file.length) {
@@ -25,21 +25,25 @@ module.exports = {
   async uploadFile(ctx) {
     // 上传单个文件
     const file = ctx.request.files.file // 获取上传文件
-
     // 创建可读流
     const reader = fs.createReadStream(file.path)
-    const fileName = `${moment().format('YYYY-MM-DD')}_${file.name}`
-    let filePath = `${BASEPATH}/pubilc/upload/${fileName}`
-
+    const dirPath = `/public/upload/${moment().format('YYYY-MM')}`
+    // 若无目录，创建目录
+    await mkdirsSync(BASEPATH + dirPath)
+    const filePath = `.${dirPath}/${file.name}`
     // 创建可写流
     const upStream = fs.createWriteStream(filePath)
 
     // 可读流通过管道写入可写流
-    reader.pipe(upStream)
+    try {
+      await reader.pipe(upStream)
+    } catch (error) {
+      return (ctx.body = {error})
+    }
 
     return (ctx.body = {
-      fileName,
-      path: `${STATICURL}/upload/${fileName}`
+      fileName: file.name,
+      path: filePath.replace('./public', STATICURL)
     })
   }
 }
