@@ -16,8 +16,7 @@ const UserSchema = new BaseSchema({
   // 头像
   avatar: {
     type: String,
-    default:
-      'https://img-1256555015.file.myqcloud.com/2019/04/03/5ca43fa6cceaa.png'
+    default: 'https://yun.yang143.cn/2019/04/03/5ca43fa6cceaa.png'
   },
   // 密码 (AES 加密)
   password: String,

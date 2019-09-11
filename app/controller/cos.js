@@ -45,7 +45,11 @@ module.exports = {
   },
 
   async uploadFile(ctx) {
-    const {bucket = Bucket, region = Region, path = '/mzitu'} = ctx.request.body
+    const {
+      bucket = Bucket,
+      region = Region,
+      path = '/static'
+    } = ctx.request.body
     // 上传单个文件
     const file = ctx.request.files.file // 获取上传文件
     const filePath = `${moment().format('YYYY-MM')}/${moment().format('DD')}/${
@@ -63,6 +67,7 @@ module.exports = {
         ctx.body = data
       })
       .catch(error => {
+        ctx.status = 500
         ctx.body = error
       })
   },
