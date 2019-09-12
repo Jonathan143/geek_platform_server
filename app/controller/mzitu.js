@@ -74,7 +74,7 @@ const search = async ctx => {
 const getCoverList = async (data, apiUrl) => {
   const $ = cheerio.load(data)
   let list = []
-  $('#pins li>a').each(async (i, e) => {
+  $('#pins li>a').each((i, e) => {
     const cAttribs = e.children[0].attribs
     let obj = {
       name: cAttribs.alt, //标题
@@ -121,7 +121,7 @@ const getAllPicUrl = async ctx => {
 }
 
 const setPage = page =>
-  page === undefined || page === 1 ? '' : `/page/${page}`
+  page === undefined || page === '1' ? '' : `/page/${page}`
 
 const formatDate = date => {
   return moment(date).format('YYYY-MM')
