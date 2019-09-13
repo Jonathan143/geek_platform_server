@@ -1,23 +1,19 @@
 const BaseSchema = require('./BaseSchema')
 const mongoose = require('mongoose')
+const moment = require('moment')
 
 const MzituSchema = new BaseSchema({
   title: String,
-  url: String,
-  isDownload: {
-    type: Boolean,
-    default: false
-  },
+  path: String,
   isUploadTos: {
     type: Boolean,
     default: false
   },
-  date: String,
-  updateDateTime: {
+  date: {
     type: String,
-    default: ''
+    default: moment().format('YYYY-DD-MM HH:mm:ss')
   },
-  downloadDateTime: {
+  updateDateTime: {
     type: String,
     default: ''
   },

@@ -8,6 +8,7 @@ const baseUrl = 'https://www.mzitu.com'
 const {STATICURL, BASEPATH} = global.config
 const staticUrl = `${STATICURL}/mzitu/`
 const moment = require('moment')
+const {uploadAndGetUrl} = require('./cos')
 /**
  *
  * @param {String} type
@@ -26,10 +27,11 @@ const getHome = async ctx => {
   const apiUrl = `${baseUrl}${
     content === undefined || content === ''
       ? type
-        ? `/${type}`
+        ? `/${type}/`
         : ''
-      : `/search/${qs.escape(content)}`
+      : `/search/${qs.escape(content)}/`
   }${setPage(page)}`
+  console.log(apiUrl)
 
   await $callApi({
     api: apiUrl,
@@ -121,7 +123,7 @@ const getAllPicUrl = async ctx => {
 }
 
 const setPage = page =>
-  page === undefined || page === '1' ? '' : `/page/${page}`
+  page === undefined || page === '1' ? '' : `/page/${page}/`
 
 const formatDate = date => {
   return moment(date).format('YYYY-MM')
@@ -135,11 +137,12 @@ const download = async ({coverUrl, name, date, apiUrl}) => {
   const filePath = `${dirPath}/${fileName}`
   if (!fs.existsSync(filePath)) {
     const writeStream = fs.createWriteStream(filePath)
-    await downloadApi({imageUrl: coverUrl, pageUrl: apiUrl}).then(
-      async data => {
-        await data.pipe(writeStream)
-      }
-    )
+    const data = await downloadApi({imageUrl: coverUrl, pageUrl: apiUrl})
+    await data.pipe(writeStream)
+    // await uploadAndGetUrl({
+    //     //   filePath: `cover/${formatDate(date)}/${fileName}`,
+    //     //   stream: data
+    //     // })
   }
 
   return `${staticUrl}/cover/${formatDate(date)}/${fileName}`
