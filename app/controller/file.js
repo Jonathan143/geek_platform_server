@@ -9,13 +9,15 @@ module.exports = {
     const {path, security = false} = ctx.query
     const filePath = os.homedir() + (path === '/' ? '' : path)
     const result = await listDir(security ? filePath : path)
-    const publicPath = `${BASEPATH}/public`
 
-    if (path.includes(publicPath) && result.file.length) {
-      const fileBasePath = path.replace(publicPath, '')
+    if (!result.error) {
+      const publicPath = `${BASEPATH}/public`
+      if (path.includes(publicPath) && result.file.length) {
+        const fileBasePath = path.replace(publicPath, '')
 
-      for (const file of result.file) {
-        file['url'] = `${STATICURL}${fileBasePath}${file.name}`
+        for (const file of result.file) {
+          file['url'] = `${STATICURL}${fileBasePath}${file.name}`
+        }
       }
     }
 
