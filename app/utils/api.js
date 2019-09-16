@@ -6,14 +6,6 @@ const axios = require('axios')
 const qs = require('qs') // 根据需求导入qs模块
 
 /**
- * 请求失败控制台log
- */
-const printError = ({ method, api, param, config, error }) => {
-  console.error(`${method.toUpperCase()} ["${api}"] 调用失败: ${error.message}`)
-  console.log(JSON.stringify({ api, param, config }, null, 2))
-}
-
-/**
  * 创建axios实例
  * 设置post请求头
  */
@@ -38,9 +30,9 @@ const instance = axios.create({
 const disposeParam = (method, param) => {
   switch (method) {
     case 'get':
-      return { params: param }
+      return {params: param}
     case 'post':
-      return { data: qs.stringify(param) }
+      return {data: qs.stringify(param)}
   }
   return param
 }
@@ -54,15 +46,13 @@ module.exports = ({
 }) => {
   const mParam = disposeParam(method, param)
 
-  Object.assign(config, { url: api, method }, mParam)
+  Object.assign(config, {url: api, method}, mParam)
   return instance(config)
     .then(data => {
       return Promise.resolve(data.data)
     })
     .catch(error => {
       if (!noNotify) {
-        printError({ method, api, param, config, error })
-
         const message = error.response.data || error
         console.log(message)
       }

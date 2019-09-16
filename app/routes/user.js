@@ -21,5 +21,6 @@ router.get('/delete_user_by_id', user.deleteUserById)
 router.get('/update_user_by_id', user.updateUserById)
 
 router.get('/menu_list', user.getUserMenuList)
+router.get('/reset_menu', user.resetMenu)
 
 module.exports = router

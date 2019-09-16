@@ -24,7 +24,7 @@ module.exports = async (ctx, next) => {
       401,
       JSON.stringify({
         code: 401,
-        message: '未登录'
+        error: '未登录'
       })
     )
   }
@@ -36,7 +36,7 @@ module.exports = async (ctx, next) => {
       403,
       JSON.stringify({
         code: 403,
-        message: '登录过期'
+        error: '登录过期'
       })
     )
   }

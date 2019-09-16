@@ -12,11 +12,7 @@ module.exports = async (ctx, next) => {
 
   if (body) {
     if (body.error) {
-      // return (ctx.body = {
-      //   code: 500,
-      //   error: body.error
-      // })
-      return ctx.throw(500, {error: body.error})
+      return ctx.throw(400, JSON.stringify({error: body.error}))
     }
   }
 }

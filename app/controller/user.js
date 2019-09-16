@@ -42,5 +42,10 @@ module.exports = {
   async getUserMenuList(ctx) {
     const menuList = await Menu.find({}).sort({_id: 1})
     ctx.body = menuList
+  },
+
+  async resetMenu(ctx) {
+    await Menu.reset()
+    ctx.body = {message: '重置菜单成功！'}
   }
 }
