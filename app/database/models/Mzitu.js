@@ -4,12 +4,16 @@ const moment = require('moment')
 
 const MzituSchema = new BaseSchema({
   title: String,
-  path: String,
+  url: String,
   isUploadTos: {
     type: Boolean,
     default: false
   },
   date: {
+    type: String,
+    default: ''
+  },
+  loadDate: {
     type: String,
     default: moment().format('YYYY-DD-MM HH:mm:ss')
   },
@@ -17,12 +21,39 @@ const MzituSchema = new BaseSchema({
     type: String,
     default: ''
   },
-  // 菜单栏的二级
   children: []
 })
 
-const addCover = async function() {}
+const addCover = async function({title, url, date}) {
+  const data = await this.create({title, url, date})
 
-// Object.assign(MzituSchema.statics, {addCover})
+  return data
+}
+
+const addCoverChilden = async function({title, urls, isUploadTos = false}) {
+  try {
+    const data = await this.findOne({title})
+    if (!data.length) {
+      this.updateOne(
+        {_id: id},
+        {
+          isUploadTos,
+          updateDateTime: moment().format('YYYY-DD-MM HH:mm:ss'),
+          children: urls
+        }
+      )
+    }
+    return true
+  } catch (error) {
+    return false
+  }
+}
+
+const findOneByTitle = async function({title}) {
+  const data = await this.findOne({title})
+  return data
+}
+
+Object.assign(MzituSchema.statics, {addCover, findOneByTitle, addCoverChilden})
 
 module.exports = mongoose.model('Mzitu', MzituSchema)

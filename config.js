@@ -21,5 +21,7 @@ module.exports = {
     cosUrl: ''
   },
   // 对象存储加速域名
-  CDNURL: ''
+  CDNURL: '',
+  // 是否上传 mzitu 到腾讯云
+  ISMZITUUPLOADTOS: false
 }

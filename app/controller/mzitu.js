@@ -5,10 +5,12 @@ const path = require('path')
 const {mkdirsSync, listDir} = require('../utils/file')
 const qs = require('querystring')
 const baseUrl = 'https://www.mzitu.com'
-const {STATICURL, BASEPATH} = global.config
+const {STATICURL, BASEPATH, ISMZITUUPLOADTOS} = global.config
 const staticUrl = `${STATICURL}/mzitu/`
 const moment = require('moment')
 const {uploadAndGetUrl} = require('./cos')
+const mongoose = require('mongoose')
+const Mzitu = mongoose.model('Mzitu')
 /**
  *
  * @param {String} type
@@ -31,7 +33,6 @@ const getHome = async ctx => {
         : ''
       : `/search/${qs.escape(content)}/`
   }${setPage(page)}`
-  console.log(apiUrl)
 
   await $callApi({
     api: apiUrl,
@@ -130,22 +131,31 @@ const formatDate = date => {
 }
 
 const download = async ({coverUrl, name, date, apiUrl}) => {
-  const dirPath = `${BASEPATH}/public/mzitu/cover/${formatDate(date)}`
+  const mzituCover = await Mzitu.findOneByTitle({title: name})
+  const basePath = `cover/${formatDate(date)}`
+  const dirPath = `${BASEPATH}/public/mzitu/${basePath}`
   const fileName = name + coverUrl.match(/\.(\w+)$/)[0]
+  let mzituUrl = `${staticUrl}${basePath}/${fileName}`
 
-  await mkdirsSync(dirPath)
-  const filePath = `${dirPath}/${fileName}`
-  if (!fs.existsSync(filePath)) {
-    const writeStream = fs.createWriteStream(filePath)
+  if (!mzituCover) {
     const data = await downloadApi({imageUrl: coverUrl, pageUrl: apiUrl})
-    await data.pipe(writeStream)
-    // await uploadAndGetUrl({
-    //     //   filePath: `cover/${formatDate(date)}/${fileName}`,
-    //     //   stream: data
-    //     // })
+
+    if (ISMZITUUPLOADTOS) {
+      mzituUrl = await uploadAndGetUrl({
+        filePath: `${basePath}/${fileName}`,
+        stream: data
+      })
+    } else {
+      await mkdirsSync(dirPath)
+      const filePath = `${dirPath}/${fileName}`
+      const writeStream = fs.createWriteStream(filePath)
+      await data.pipe(writeStream)
+    }
+
+    Mzitu.addCover({title: name, date, url: mzituUrl})
   }
 
-  return `${staticUrl}/cover/${formatDate(date)}/${fileName}`
+  return mzituUrl
 }
 
 const downloadAll = async ctx => {

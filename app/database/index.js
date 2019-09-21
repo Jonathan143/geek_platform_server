@@ -17,6 +17,7 @@ db.on('open', async () => {
 const Menu = require('./models/Menu')
 const Role = require('./models/Role')
 const User = require('./models/User')
+require('./models/Mzitu')
 
 const registerSuperAdmin = async () => {
   const count = await User.countDocuments()
