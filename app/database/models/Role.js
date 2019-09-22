@@ -20,6 +20,15 @@ const initData = async function() {
   }
 }
 
-Object.assign(RoleSchema.statics, {initData})
+const fetchUserRoleList = async function() {
+  try {
+    const data = await this.find({})
+    return data
+  } catch (error) {
+    return {error}
+  }
+}
+
+Object.assign(RoleSchema.statics, {initData, fetchUserRoleList})
 
 module.exports = mongoose.model('Role', RoleSchema)

@@ -5,6 +5,9 @@ const Role = require('./Role')
 const moment = require('moment')
 const encryption = require('../../utils/encryption')
 const jwt = require('jsonwebtoken')
+const formatDate = () => {
+  return moment().format('YYYY-MM-DD HH:mm:ss')
+}
 
 const UserSchema = new BaseSchema({
   // 用户名
@@ -27,12 +30,12 @@ const UserSchema = new BaseSchema({
   // 创建日期
   createDateTime: {
     type: String,
-    default: moment().format('YYYY-MM-DD HH:mm:ss')
+    default: formatDate()
   },
   // 最后修改时间
   updateDateTime: {
     type: String,
-    default: moment().format('YYYY-MM-DD HH:mm:ss')
+    default: formatDate()
   },
   // 最后登录时间
   lastLoginDateTime: {
@@ -74,7 +77,7 @@ const login = async function({username, password}) {
 
   const {result} = encryption.aesEncrypt(password, user.salt)
   if (user.password === result) {
-    user.lastLoginDateTime = moment().format('YYYY-MM-DD HH:mm:ss')
+    user.lastLoginDateTime = formatDate()
     await user.save()
     const {
       id,
@@ -149,8 +152,12 @@ const updateUserById = async function({id, ...info}) {
         delete info.newPasswod
       }
     }
+    info.updateDateTime = formatDate()
 
-    result = await this.updateOne({_id: id}, info)
+    result = await this.findByIdAndUpdate(id, info, {
+      new: true,
+      select: {password: 0, salt: 0}
+    })
   } catch (error) {
     result.error = `update ${info.username} fail.`
   }

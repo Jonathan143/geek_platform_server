@@ -24,7 +24,7 @@
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "moment": "^2.24.0",
-    "mongoose": "^5.6.11",
+    "mongoose": "^5.7.1",
     "pm2": "^3.5.1",
     "simple-git": "^1.126.0"
   },
