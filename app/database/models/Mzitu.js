@@ -9,6 +9,10 @@ const MzituSchema = new BaseSchema({
     type: Boolean,
     default: false
   },
+  isDownload: {
+    type: Boolean,
+    default: false
+  },
   date: {
     type: String,
     default: ''
@@ -21,8 +25,14 @@ const MzituSchema = new BaseSchema({
     type: String,
     default: ''
   },
+  downloadDateTime: {
+    type: String,
+    default: ''
+  },
   children: []
 })
+
+const getTime = () => moment().format('YYYY-DD-MM HH:mm:ss')
 
 const addCover = async function({title, url, date}) {
   const data = await this.create({title, url, date})
@@ -32,20 +42,19 @@ const addCover = async function({title, url, date}) {
 
 const addCoverChilden = async function({title, urls, isUploadTos = false}) {
   try {
-    const data = await this.findOne({title})
-    if (!data.length) {
-      this.updateOne(
-        {_id: id},
-        {
-          isUploadTos,
-          updateDateTime: moment().format('YYYY-DD-MM HH:mm:ss'),
-          children: urls
-        }
-      )
-    }
-    return true
+    const data = await this.updateOne(
+      {title},
+      {
+        isDownload: true,
+        isUploadTos,
+        downloadDateTime: getTime(),
+        updateDateTime: isUploadTos ? getTime() : '',
+        children: urls
+      }
+    )
+    return data
   } catch (error) {
-    return false
+    return {error}
   }
 }
 

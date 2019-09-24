@@ -153,6 +153,8 @@ const download = async ({coverUrl, name, date, apiUrl}) => {
     }
 
     Mzitu.addCover({title: name, date, url: mzituUrl})
+  } else {
+    mzituUrl = mzituCover.url
   }
 
   return mzituUrl
@@ -160,24 +162,39 @@ const download = async ({coverUrl, name, date, apiUrl}) => {
 
 const downloadAll = async ctx => {
   let {urls, name, date} = ctx.request.body
+  const mzituCover = await Mzitu.findOneByTitle({title: name})
   let list = []
   const fDate = formatDate(date)
   const dirPath = `${BASEPATH}/public/mzitu/${fDate}/${name}`
 
-  await mkdirsSync(dirPath)
-
-  for (const url of urls) {
-    const fileName = url.imageUrl.match('[^/]+(?!.*/)')[0]
-    const filePath = `${dirPath}/${fileName}`
-
-    if (!fs.existsSync(filePath)) {
+  if (mzituCover.isDownload) {
+    list = mzituCover.children
+  } else {
+    await mkdirsSync(dirPath)
+    for (const url of urls) {
+      const fileName = url.imageUrl.match('[^/]+(?!.*/)')[0]
+      const filePath = `${dirPath}/${fileName}`
       const writeStream = fs.createWriteStream(filePath)
+      let mzituUrl = `${staticUrl}${fDate}/${name}/${fileName}`
 
-      await downloadApi(url).then(async data => {
+      const data = await downloadApi(url)
+      if (ISMZITUUPLOADTOS) {
+        mzituUrl = await uploadAndGetUrl({
+          filePath: `${fDate}/${name}/${fileName}`,
+          stream: data
+        })
+      } else {
         await data.pipe(writeStream)
-      })
+      }
+
+      list.push(mzituUrl)
     }
-    list.push(`${staticUrl}${fDate}/${name}/${fileName}`)
+
+    await Mzitu.addCoverChilden({
+      title: name,
+      urls: list,
+      isUploadTos: ISMZITUUPLOADTOS
+    })
   }
 
   ctx.body = list
