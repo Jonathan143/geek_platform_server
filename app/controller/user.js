@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Menu = mongoose.model('Menu')
 const User = mongoose.model('User')
+const Role = mongoose.model('Role')
 
 module.exports = {
   // 登录
@@ -35,7 +36,12 @@ module.exports = {
   },
 
   async updateUserById(ctx) {
-    const result = await User.updateUserById(ctx.query)
+    const result = await User.updateUserById(ctx.request.body)
+    ctx.body = result
+  },
+
+  async fetchUserRoleList(ctx) {
+    const result = await Role.fetchUserRoleList()
     ctx.body = result
   },
 

@@ -4,7 +4,8 @@ mongoose.Promise = global.Promise
 
 mongoose.connect(`${global.config.MONGODB_HOST}/geek_platform`, {
   useNewUrlParser: true,
-  useFindAndModify: false
+  useFindAndModify: false,
+  useUnifiedTopology: true
 })
 
 const db = mongoose.connection
