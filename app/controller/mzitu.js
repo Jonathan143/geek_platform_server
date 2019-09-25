@@ -174,7 +174,6 @@ const downloadAll = async ctx => {
     for (const url of urls) {
       const fileName = url.imageUrl.match('[^/]+(?!.*/)')[0]
       const filePath = `${dirPath}/${fileName}`
-      const writeStream = fs.createWriteStream(filePath)
       let mzituUrl = `${staticUrl}${fDate}/${name}/${fileName}`
 
       const data = await downloadApi(url)
@@ -184,6 +183,7 @@ const downloadAll = async ctx => {
           stream: data
         })
       } else {
+        const writeStream = fs.createWriteStream(filePath)
         await data.pipe(writeStream)
       }
 

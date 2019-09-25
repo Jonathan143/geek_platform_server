@@ -31,7 +31,7 @@ module.exports = {
   },
 
   async deleteUserById(ctx) {
-    const result = await User.deleteUserById(ctx.query)
+    const result = await User.deleteUserById(ctx.request.body)
     ctx.body = result
   },
 
