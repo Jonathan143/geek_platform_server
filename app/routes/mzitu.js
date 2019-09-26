@@ -10,7 +10,7 @@ router.get('/', mzitu.getHome)
 router.get('/search', mzitu.search)
 
 // 获取某个专辑的所有图片链接
-router.get('/picurl', mzitu.getAllPicUrl)
+router.get('/album_urls', mzitu.getAllPicUrl)
 
 router.post('/download', mzitu.downloadAll)
 
