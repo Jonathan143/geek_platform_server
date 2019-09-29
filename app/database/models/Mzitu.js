@@ -63,6 +63,22 @@ const findOneByTitle = async function({title}) {
   return data
 }
 
-Object.assign(MzituSchema.statics, {addCover, findOneByTitle, addCoverChilden})
+const fetchMziWhereIsDownload = async function({nameLike, id}) {
+  let findBy = {}
+  nameLike ? (findBy.title = eval(`/${nameLike}/`)) : ''
+  id ? (findBy._id = id) : ''
+
+  const data = await this.find({
+    $or: [findBy]
+  })
+  return data
+}
+
+Object.assign(MzituSchema.statics, {
+  addCover,
+  findOneByTitle,
+  addCoverChilden,
+  fetchMziWhereIsDownload
+})
 
 module.exports = mongoose.model('Mzitu', MzituSchema)

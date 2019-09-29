@@ -52,10 +52,6 @@ module.exports = ({
       return Promise.resolve(data.data)
     })
     .catch(error => {
-      if (!noNotify) {
-        const message = error.response.data || error
-        console.log(message)
-      }
       return Promise.reject(error.message)
     })
 }
