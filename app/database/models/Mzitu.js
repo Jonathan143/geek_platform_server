@@ -64,16 +64,22 @@ const findOneByTitle = async function({title}) {
   return data
 }
 
-const fetchMziFromDataBase = async function({nameLike, id}) {
+const fetchMziFromDataBase = async function({
+  nameLike,
+  id,
+  pageSize,
+  pageIndex
+}) {
   let findBy = {}
   nameLike ? (findBy.title = eval(`/${nameLike}/`)) : ''
   id ? (findBy._id = id) : ''
-
+  pageSize = Number(pageSize)
   const mziList = await this.find({
     $or: [findBy]
   })
-    .limit(10)
-    .skip(0)
+    .limit(pageSize)
+    .skip((Number(pageIndex) - 1) * pageSize)
+
   const total = await this.find({
     $or: [findBy]
   }).count()

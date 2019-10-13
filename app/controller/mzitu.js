@@ -223,8 +223,7 @@ const downloadApi = ({imageUrl, pageUrl}) => {
 }
 
 const fetchMziFromDataBase = async ctx => {
-  const {nameLike, id} = ctx.query
-  ctx.body = await Mzitu.fetchMziFromDataBase({nameLike, id})
+  ctx.body = await Mzitu.fetchMziFromDataBase(ctx.query)
 }
 
 module.exports = {
