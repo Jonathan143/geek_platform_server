@@ -11,7 +11,23 @@
       "name": "mzitu"
     },
     "fontClass": "el-icon-picture",
-    "title": "妹子图"
+    "title": "妹子图",
+    "children": [
+      {
+        "route": {
+          "name": "mzitu"
+        },
+        "icon": "tuku",
+        "title": "妹子图"
+      },
+      {
+        "route": {
+          "name": "mzituDownloadPreview"
+        },
+        "icon": "wenjianxiazai",
+        "title": "下载预览"
+      }
+    ]
   },
   {
     "route": {

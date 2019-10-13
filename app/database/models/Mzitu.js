@@ -4,7 +4,8 @@ const moment = require('moment')
 
 const MzituSchema = new BaseSchema({
   title: String,
-  url: String,
+  sourceUrl: String,
+  coverUrl: String,
   isUploadTos: {
     type: Boolean,
     default: false
@@ -34,8 +35,8 @@ const MzituSchema = new BaseSchema({
 
 const getTime = () => moment().format('YYYY-DD-MM HH:mm:ss')
 
-const addCover = async function({title, url, date}) {
-  const data = await this.create({title, url, date})
+const addCover = async function({title, sourceUrl, coverUrl, date}) {
+  const data = await this.create({title, sourceUrl, coverUrl, date})
 
   return data
 }
@@ -63,22 +64,30 @@ const findOneByTitle = async function({title}) {
   return data
 }
 
-const fetchMziWhereIsDownload = async function({nameLike, id}) {
+const fetchMziFromDataBase = async function({nameLike, id}) {
   let findBy = {}
   nameLike ? (findBy.title = eval(`/${nameLike}/`)) : ''
   id ? (findBy._id = id) : ''
 
-  const data = await this.find({
+  const mziList = await this.find({
     $or: [findBy]
   })
-  return data
+    .limit(10)
+    .skip(0)
+  const total = await this.find({
+    $or: [findBy]
+  }).count()
+  return {
+    mziList,
+    total
+  }
 }
 
 Object.assign(MzituSchema.statics, {
   addCover,
   findOneByTitle,
   addCoverChilden,
-  fetchMziWhereIsDownload
+  fetchMziFromDataBase
 })
 
 module.exports = mongoose.model('Mzitu', MzituSchema)

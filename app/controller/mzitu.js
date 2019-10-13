@@ -81,7 +81,7 @@ const getCoverList = async (data, apiUrl) => {
     let obj = {
       name: cAttribs.alt, //标题
       coverUrl: cAttribs['data-original'], //封面图
-      url: e.attribs.href, //图片网页的url
+      sourceUrl: e.attribs.href, //图片网页的url
       date: $(e)
         .siblings('.time')
         .text()
@@ -129,7 +129,7 @@ const formatDate = date => {
   return moment(date).format('YYYY-MM')
 }
 
-const download = async ({coverUrl, name, date, apiUrl}) => {
+const download = async ({coverUrl, name, date, apiUrl, sourceUrl}) => {
   const mzituCover = await Mzitu.findOneByTitle({title: name})
   const basePath = `cover/${formatDate(date)}`
   const dirPath = `${BASEPATH}/public/mzitu/${basePath}`
@@ -151,9 +151,9 @@ const download = async ({coverUrl, name, date, apiUrl}) => {
       await data.pipe(writeStream)
     }
 
-    Mzitu.addCover({title: name, date, url: mzituUrl})
+    Mzitu.addCover({title: name, date, coverUrl: mzituUrl, sourceUrl})
   } else {
-    mzituUrl = mzituCover.url
+    mzituUrl = mzituCover.coverUrl
   }
 
   return mzituUrl
@@ -222,9 +222,9 @@ const downloadApi = ({imageUrl, pageUrl}) => {
   })
 }
 
-const fetchMziWhereIsDownload = async ctx => {
+const fetchMziFromDataBase = async ctx => {
   const {nameLike, id} = ctx.query
-  ctx.body = await Mzitu.fetchMziWhereIsDownload({nameLike, id})
+  ctx.body = await Mzitu.fetchMziFromDataBase({nameLike, id})
 }
 
 module.exports = {
@@ -233,5 +233,5 @@ module.exports = {
   search,
   downloadAll,
   getCategoryList,
-  fetchMziWhereIsDownload
+  fetchMziFromDataBase
 }
