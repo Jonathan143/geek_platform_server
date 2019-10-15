@@ -15,7 +15,7 @@
     "children": [
       {
         "route": {
-          "name": "mzitu"
+          "name": "mzituIndex"
         },
         "icon": "tuku",
         "title": "妹子图"
@@ -31,14 +31,14 @@
   },
   {
     "route": {
-      "name": "file"
+      "name": "fileIndex"
     },
     "icon": "xiangmuguanli",
     "title": "文件"
   },
   {
     "route": {
-      "name": "reptile"
+      "name": "reptileIndex"
     },
     "icon": "crawler",
     "title": "爬虫"
