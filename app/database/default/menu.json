@@ -1,30 +1,30 @@
 [
   {
     "route": {
-      "name": "overview"
+      "name": "index"
     },
-    "fontClass": "el-icon-s-data",
+    "fontClass": "bar-chart",
     "title": "概览"
   },
   {
     "route": {
       "name": "mzitu"
     },
-    "fontClass": "el-icon-picture",
+    "fontClass": "gratipay",
     "title": "妹子图",
     "children": [
       {
         "route": {
           "name": "mzituIndex"
         },
-        "icon": "tuku",
-        "title": "妹子图"
+        "fontClass": "cloud",
+        "title": "云端妹子"
       },
       {
         "route": {
           "name": "mzituDownloadPreview"
         },
-        "icon": "wenjianxiazai",
+        "fontClass": "cloud-download",
         "title": "下载预览"
       }
     ]
@@ -33,21 +33,21 @@
     "route": {
       "name": "fileIndex"
     },
-    "icon": "xiangmuguanli",
+    "fontClass": "file-o",
     "title": "文件"
   },
   {
     "route": {
       "name": "reptileIndex"
     },
-    "icon": "crawler",
+    "fontClass": "upload",
     "title": "爬虫"
   },
   {
     "route": {
       "name": "userManagement"
     },
-    "fontClass": "el-icon-user",
+    "fontClass": "user-o",
     "title": "用户权限"
   }
 ]
