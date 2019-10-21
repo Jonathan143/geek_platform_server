@@ -144,12 +144,14 @@ const updateUserById = async function({id, ...info}) {
     const {password, newPasswod} = info
     if (password) {
       const user = await this.findById(id)
-      const {psd} = encryption.aesEncrypt(password, user.salt)
-      if (user.password === psd && newPasswod) {
-        const {newPsd, salt} = encryption.aesEncrypt(newPasswod)
-        info.password = newPsd
-        info.salt = salt
+      const {result} = encryption.aesEncrypt(password, user.salt)
+      if (user.password === result && newPasswod) {
+        const newPsd = encryption.aesEncrypt(newPasswod)
+        info.password = newPsd.result
+        info.salt = newPsd.salt
         delete info.newPasswod
+      } else {
+        return {error: `update ${info.username} fail. pasword is error!`}
       }
     }
     info.updateDateTime = formatDate()

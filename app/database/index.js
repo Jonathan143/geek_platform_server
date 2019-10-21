@@ -23,11 +23,12 @@ require('./models/Mzitu')
 const registerSuperAdmin = async () => {
   const count = await User.countDocuments()
   if (!count) {
+    const {id} = await Role.findOne({tag: 'superadmin'})
     const user = {
       username: 'superadmin',
       password: '1',
       email: '1439821144@qq.com',
-      role: '5d6e62ab9a9c720d1845cc96',
+      role: id,
       nickname: '超级管理员'
     }
     await User.register(user)
