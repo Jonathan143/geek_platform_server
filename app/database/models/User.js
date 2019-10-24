@@ -142,24 +142,30 @@ const updateUserById = async function({id, ...info}) {
   let result = {}
   try {
     const {password, newPasswod} = info
-    if (password) {
-      const user = await this.findById(id)
-      const {result} = encryption.aesEncrypt(password, user.salt)
-      if (user.password === result && newPasswod) {
-        const newPsd = encryption.aesEncrypt(newPasswod)
-        info.password = newPsd.result
-        info.salt = newPsd.salt
-        delete info.newPasswod
-      } else {
-        return {error: `update ${info.username} fail. pasword is error!`}
+    if (id) {
+      if (password && newPasswod) {
+        const user = await this.findById(id)
+        const {result} = encryption.aesEncrypt(password, user.salt)
+        if (user.password === result && newPasswod) {
+          const newPsd = encryption.aesEncrypt(newPasswod)
+          info.password = newPsd.result
+          info.salt = newPsd.salt
+          delete info.newPasswod
+        } else {
+          return {error: `update ${info.username} fail. pasword is error!`}
+        }
       }
-    }
-    info.updateDateTime = formatDate()
+      info.updateDateTime = formatDate()
 
-    result = await this.findByIdAndUpdate(id, info, {
-      new: true,
-      select: {password: 0, salt: 0}
-    })
+      result = await this.findByIdAndUpdate(id, info, {
+        new: true,
+        select: {password: 0, salt: 0}
+      })
+    } else if (password) {
+      result = await this.register(info, this)
+    } else {
+      result.error = `user id is not find`
+    }
   } catch (error) {
     result.error = `update ${info.username} fail.`
   }
