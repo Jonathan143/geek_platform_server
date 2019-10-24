@@ -76,6 +76,7 @@ const search = async ctx => {
 const getCoverList = async (data, apiUrl) => {
   const $ = cheerio.load(data)
   let list = []
+
   $('#pins li>a').each((i, e) => {
     const cAttribs = e.children[0].attribs
     let obj = {
@@ -86,9 +87,24 @@ const getCoverList = async (data, apiUrl) => {
         .siblings('.time')
         .text()
     }
-
     list.push(obj) //输出目录页查询出来的所有链接地址
   })
+  if (!list.length) {
+    $('#content>.placeholder>.place-padding figure').each((i, e) => {
+      const cAttribs = $(e).find($('img'))['0'].attribs
+      let obj = {
+        name: cAttribs.alt, //标题
+        coverUrl: cAttribs['data-original'], //封面图
+        sourceUrl: $(e).find($('a'))['0'].attribs.href, //图片网页的url
+        date: $(e)
+          .siblings('.post-meta')
+          .find($('.time'))
+          .text()
+      }
+
+      list.push(obj) //输出目录页查询出来的所有链接地址
+    })
+  }
   for (const i of list) {
     i.coverUrl = await download({apiUrl, ...i})
   }
@@ -101,12 +117,23 @@ const getAllPicUrl = async ctx => {
     api: url,
     param: {}
   }).then(async data => {
-    const $ = cheerio.load(data),
-      page = $('div.pagenavi > a > span'),
+    const $ = cheerio.load(data)
+    let srcList = [],
+      total = 0,
+      baseSrcList = []
+    try {
+      const page = $('div.pagenavi > a > span')
       baseSrcList = $('.main-image > p > a > img')[0].attribs.src.split('01.')
 
-    let srcList = [],
       total = $(page[page.length - 2]).text()
+    } catch (error) {
+      total = $('.prev-next-page')
+        .text()
+        .replace(/[1\/,页]/g, '')
+      baseSrcList = $('.place-padding>figure a img')['0'].attribs.src.split(
+        '01.'
+      )
+    }
 
     for (let i = 1; i <= total; i++) {
       srcList.push({
