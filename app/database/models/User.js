@@ -1,7 +1,6 @@
 const BaseSchema = require('./BaseSchema')
 const mongoose = require('mongoose'),
   ObjectId = mongoose.Types.ObjectId
-const Role = require('./Role')
 const moment = require('moment')
 const encryption = require('../../utils/encryption')
 const jwt = require('jsonwebtoken')
@@ -110,11 +109,21 @@ const login = async function({username, password}) {
  * @param string id
  * id 为空话则查询所有用户
  */
-const findUserById = async function({id, hidePassword = true}) {
+const findUserById = async function({id, namelike, hidePassword = true}) {
   const option = hidePassword ? {password: 0, salt: 0} : {}
-  let user = await (id
-    ? this.findById(id, option)
-    : this.find({}, option)
+  let findBy = []
+
+  if (namelike) {
+    findBy.push({username: eval(`/${namelike}/`)})
+    findBy.push({nickname: eval(`/${namelike}/`)})
+  }
+  id ? findBy.push({_id: id}) : ''
+
+  let user = await this.find(
+    {
+      $or: findBy.length ? findBy : [{}]
+    },
+    option
   ).populate('role')
   if (!user) return {error: `id: ${id} is not found.`}
 
