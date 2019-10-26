@@ -3,7 +3,8 @@ const jwt = require('jsonwebtoken')
 
 whitelist = [
   {path: '/user/login$', method: 'post'},
-  {path: '/user/register$', method: 'post'}
+  {path: '/user/register$', method: 'post'},
+  {path: '/update-code', method: 'post'}
 ]
 
 const isInWhitelist = (path, method) => {
