@@ -12,14 +12,8 @@ router.post('/update-code', async ctx => {
   )
 
   if (result === ctx.request.header['x-gitee-token']) {
-    const git = await exec('git pull')
-    const noUpdate = 'Already up'
-    if (!git.stdout.includes(noUpdate)) {
-      ctx.body = 'success'
-      exec('yarn && yarn pm2')
-    } else {
-      ctx.body = noUpdate
-    }
+    ctx.body = 'success'
+    exec('git pull && yarn && yarn pm2')
   } else {
     ctx.throw(403, 'fail')
   }
