@@ -68,20 +68,26 @@ const fetchMziFromDataBase = async function({
   nameLike,
   id,
   pageSize,
-  pageIndex
+  pageIndex,
+  isDownload
 }) {
-  let findBy = {}
-  nameLike ? (findBy.title = eval(`/${nameLike}/`)) : ''
-  id ? (findBy._id = id) : ''
+  let findBy = []
+  nameLike ? findBy.push({title: eval(`/${nameLike}/`)}) : ''
+  id ? findBy.push({_id: id}) : ''
+  if (isDownload !== '0') {
+    findBy.push({isDownload: isDownload === 'true'})
+  }
   pageSize = Number(pageSize)
+  findBy = findBy.length ? findBy : [{}]
+
   const mziList = await this.find({
-    $or: [findBy]
+    $or: findBy
   })
     .limit(pageSize)
     .skip((Number(pageIndex) - 1) * pageSize)
 
   const total = await this.find({
-    $or: [findBy]
+    $or: findBy
   }).count()
   return {
     mziList,
