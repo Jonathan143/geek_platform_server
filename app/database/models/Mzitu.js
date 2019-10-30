@@ -83,6 +83,7 @@ const fetchMziFromDataBase = async function({
   const mziList = await this.find({
     $or: findBy
   })
+    .sort({date: -1})
     .limit(pageSize)
     .skip((Number(pageIndex) - 1) * pageSize)
 
