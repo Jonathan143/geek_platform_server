@@ -80,7 +80,7 @@ const getCoverList = async (data, apiUrl) => {
   $('#pins li>a').each((i, e) => {
     const cAttribs = e.children[0].attribs
     let obj = {
-      name: cAttribs.alt, //标题
+      title: cAttribs.alt, //标题
       coverUrl: cAttribs['data-original'], //封面图
       sourceUrl: e.attribs.href, //图片网页的url
       date: $(e)
@@ -93,7 +93,7 @@ const getCoverList = async (data, apiUrl) => {
     $('#content>.placeholder>.place-padding figure').each((i, e) => {
       const cAttribs = $(e).find($('img'))['0'].attribs
       let obj = {
-        name: cAttribs.alt, //标题
+        title: cAttribs.alt, //标题
         coverUrl: cAttribs['data-original'], //封面图
         sourceUrl: $(e).find($('a'))['0'].attribs.href, //图片网页的url
         date: $(e)
@@ -156,11 +156,11 @@ const formatDate = date => {
   return moment(date).format('YYYY-MM')
 }
 
-const download = async ({coverUrl, name, date, apiUrl, sourceUrl}) => {
-  const mzituCover = await Mzitu.findOneByTitle({title: name})
+const download = async ({coverUrl, title, date, apiUrl, sourceUrl}) => {
+  const mzituCover = await Mzitu.findOneByTitle({title})
   const basePath = `cover/${formatDate(date)}`
   const dirPath = `${BASEPATH}/public/mzitu/${basePath}`
-  const fileName = name + coverUrl.match(/\.(\w+)$/)[0]
+  const fileName = title + coverUrl.match(/\.(\w+)$/)[0]
   let mzituUrl = `${staticUrl}${basePath}/${fileName}`
 
   if (!mzituCover) {
@@ -178,7 +178,7 @@ const download = async ({coverUrl, name, date, apiUrl, sourceUrl}) => {
       await data.pipe(writeStream)
     }
 
-    Mzitu.addCover({title: name, date, coverUrl: mzituUrl, sourceUrl})
+    Mzitu.addCover({title, date, coverUrl: mzituUrl, sourceUrl})
   } else {
     mzituUrl = mzituCover.coverUrl
   }
@@ -187,11 +187,11 @@ const download = async ({coverUrl, name, date, apiUrl, sourceUrl}) => {
 }
 
 const downloadAll = async ctx => {
-  let {urls, name, date} = ctx.request.body
-  const mzituCover = await Mzitu.findOneByTitle({title: name})
+  let {urls, title, date} = ctx.request.body
+  const mzituCover = await Mzitu.findOneByTitle({title})
   let list = []
   const fDate = formatDate(date)
-  const dirPath = `${BASEPATH}/public/mzitu/${fDate}/${name}`
+  const dirPath = `${BASEPATH}/public/mzitu/${fDate}/${title}`
 
   if (mzituCover.isDownload) {
     list = mzituCover.children
@@ -200,12 +200,12 @@ const downloadAll = async ctx => {
     for (const url of urls) {
       const fileName = url.imageUrl.match('[^/]+(?!.*/)')[0]
       const filePath = `${dirPath}/${fileName}`
-      let mzituUrl = `${staticUrl}${fDate}/${name}/${fileName}`
+      let mzituUrl = `${staticUrl}${fDate}/${title}/${fileName}`
 
       const data = await downloadApi(url)
       if (ISMZITUUPLOADTOS) {
         mzituUrl = await uploadAndGetUrl({
-          filePath: `${fDate}/${name}/${fileName}`,
+          filePath: `${fDate}/${title}/${fileName}`,
           stream: data
         })
       } else {
@@ -217,7 +217,7 @@ const downloadAll = async ctx => {
     }
 
     await Mzitu.addCoverChilden({
-      title: name,
+      title,
       urls: list,
       isUploadTos: ISMZITUUPLOADTOS
     })
