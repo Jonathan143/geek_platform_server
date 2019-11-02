@@ -106,7 +106,8 @@ const getCoverList = async (data, apiUrl) => {
     })
   }
   for (const i of list) {
-    i.coverUrl = await download({apiUrl, ...i})
+    const bd = await download({apiUrl, ...i})
+    Object.assign(i, bd)
   }
   return list
 }
@@ -162,6 +163,8 @@ const download = async ({coverUrl, title, date, apiUrl, sourceUrl}) => {
   const dirPath = `${BASEPATH}/public/mzitu/${basePath}`
   const fileName = title + coverUrl.match(/\.(\w+)$/)[0]
   let mzituUrl = `${staticUrl}${basePath}/${fileName}`
+  let isDownload = false
+  let children = []
 
   if (!mzituCover) {
     const data = await downloadApi({imageUrl: coverUrl, pageUrl: apiUrl})
@@ -181,9 +184,11 @@ const download = async ({coverUrl, title, date, apiUrl, sourceUrl}) => {
     Mzitu.addCover({title, date, coverUrl: mzituUrl, sourceUrl})
   } else {
     mzituUrl = mzituCover.coverUrl
+    isDownload = mzituCover.isDownload
+    children = mzituCover.children || []
   }
 
-  return mzituUrl
+  return {coverUrl: mzituUrl, isDownload, children}
 }
 
 const downloadAll = async ctx => {
