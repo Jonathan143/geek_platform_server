@@ -14,6 +14,8 @@ router.get('/album_urls', mzitu.getAllPicUrl)
 
 router.post('/download', mzitu.downloadAll)
 
+router.post('/download_package', mzitu.DownloadPackage)
+
 router.get('/get_mziFromDataBase', mzitu.fetchMziFromDataBase)
 
 router.get('/get_category_list', mzitu.getCategoryList)

@@ -10,6 +10,7 @@ const moment = require('moment')
 const {uploadAndGetUrl} = require('./cos')
 const mongoose = require('mongoose')
 const Mzitu = mongoose.model('Mzitu')
+const JSZip = require('jszip')
 /**
  *
  * @param {String} type
@@ -231,11 +232,45 @@ const downloadAll = async ctx => {
   ctx.body = list
 }
 
-const downloadApi = ({imageUrl, pageUrl}) => {
+const DownloadPackage = async ctx => {
+  const {fileList, title = 'mzitu'} = ctx.request.body
+  const zip = new JSZip()
+  const promises = []
+
+  await fileList.forEach(item => {
+    const {imageUrl, pageUrl} = item
+    const promise = downloadApi({
+      imageUrl,
+      pageUrl,
+      responseType: 'stream'
+    }).then(data => {
+      // 下载文件, 并存成ArrayBuffer对象
+      const arr_name = imageUrl.split('/')
+      let file_name = arr_name[arr_name.length - 1] // 获取文件名
+
+      zip.file(file_name, data, {
+        binary: true
+      }) // 逐个添加文件
+    })
+    promises.push(promise)
+  })
+  await Promise.all(promises)
+
+  ctx.body = await zip.generateAsync({
+    type: 'nodebuffer',
+    compression: 'DEFLATE',
+    streamFiles: true,
+    compressionOptions: {
+      level: 9
+    }
+  })
+}
+
+const downloadApi = ({imageUrl, pageUrl, responseType = 'stream'}) => {
   return $callApi({
     api: imageUrl,
     config: {
-      responseType: 'stream',
+      responseType,
       headers: {
         Accept:
           'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
@@ -264,5 +299,6 @@ module.exports = {
   search,
   downloadAll,
   getCategoryList,
-  fetchMziFromDataBase
+  fetchMziFromDataBase,
+  DownloadPackage
 }
