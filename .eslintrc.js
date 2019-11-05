@@ -10,7 +10,12 @@ module.exports = {
     SharedArrayBuffer: 'readonly'
   },
   parserOptions: {
-    ecmaVersion: 2018
+    ecmaVersion: 2018,
+    sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+      modules: true
+    }
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',

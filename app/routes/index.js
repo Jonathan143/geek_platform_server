@@ -5,6 +5,7 @@ const encryption = require('../utils/encryption')
 router.get('/', async ctx => {
   ctx.body = '服务已启动'
 })
+
 router.post('/update-code', async ctx => {
   const {result} = encryption.aesEncrypt(
     global.config.SECRET_KEY,

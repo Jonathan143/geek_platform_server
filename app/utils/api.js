@@ -9,15 +9,8 @@ const qs = require('qs') // 根据需求导入qs模块
  * 创建axios实例
  * 设置post请求头
  */
-let baseURL = ''
-if (process.env.NODE_ENV === 'development') {
-  baseURL = 'http://localhost:3200'
-} else if (process.env.NODE_ENV === 'production') {
-  baseURL = 'https://api.yang143.cn/'
-}
 const instance = axios.create({
   timeout: 1000 * 12,
-  baseURL,
   withCredentials: true,
   headers: {
     post: {
@@ -37,13 +30,7 @@ const disposeParam = (method, param) => {
   return param
 }
 
-module.exports = ({
-  method = 'get',
-  api,
-  param = {},
-  config = {},
-  noNotify = false
-}) => {
+module.exports = ({method = 'get', api, param = {}, config = {}}) => {
   const mParam = disposeParam(method, param)
 
   Object.assign(config, {url: api, method}, mParam)
