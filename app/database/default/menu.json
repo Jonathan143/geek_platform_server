@@ -38,6 +38,13 @@
   },
   {
     "route": {
+      "name": "musicIndex"
+    },
+    "fontClass": "music",
+    "title": "音乐"
+  },
+  {
+    "route": {
       "name": "reptileIndex"
     },
     "fontClass": "upload",
