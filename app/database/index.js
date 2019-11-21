@@ -19,6 +19,7 @@ const Menu = require('./models/Menu')
 const Role = require('./models/Role')
 const User = require('./models/User')
 require('./models/Mzitu')
+require('./models/Bing')
 
 const registerSuperAdmin = async () => {
   const count = await User.countDocuments()
