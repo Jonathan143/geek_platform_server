@@ -27,14 +27,17 @@ module.exports = {
     })
     if (global.config.ISMZITUUPLOADTOS) {
       tosUrl = await uploadAndGetUrl({
-        filePath: `bing/${fileName}.jpg`,
+        path: '/bing',
+        filePath: `${moment(startdate).format('YYYY-MM')}/${fileName}.jpg`,
         stream: bingStream
       })
     } else {
-      const dirPath = `${global.config.BASEPATH}/public/bing/`
+      const dirPath = `${global.config.BASEPATH}/public/bing/${moment(
+        startdate
+      ).format('YYYY-MM')}`
       await mkdirsSync(dirPath)
       // 创建可写流
-      const bingWriteStream = fs.createWriteStream(`${dirPath}${fileName}.jpg`)
+      const bingWriteStream = fs.createWriteStream(`${dirPath}/${fileName}.jpg`)
       bingStream.pipe(bingWriteStream)
     }
 
@@ -44,6 +47,7 @@ module.exports = {
       title: copyright,
       tosUrl
     }
+    console.log(JSON.stringify(result))
 
     await Bing.saveBing(result)
     return result

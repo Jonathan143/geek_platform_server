@@ -10,6 +10,10 @@ const BingSchema = new BaseSchema({
 
 const saveBing = async function(data) {
   try {
+    const bing = await this.find({date: data.date})
+    if (bing.id) {
+      return bing
+    }
     const result = await this.create(data)
     return result
   } catch (error) {
