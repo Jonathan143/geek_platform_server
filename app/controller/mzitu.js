@@ -277,7 +277,7 @@ const downloadApi = ({imageUrl, pageUrl, responseType = 'stream'}) => {
         'Accept-Encoding': 'gzip, deflate',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
         'Cache-Control': 'no-cache',
-        Host: 'i5.meizitu.net',
+        Host: 'i.mmzztt.com',
         Pragma: 'no-cache',
         'Proxy-Connection': 'keep-alive',
         Referer: pageUrl,
