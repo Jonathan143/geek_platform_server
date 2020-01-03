@@ -32,9 +32,9 @@ module.exports = {
   STATICURL: `http://${IPAdress}:${SERVER_PORT}`,
 
   // 腾讯云COS 密钥ID
-  SecretId: '',
+  SecretId: 'AKIDc9d9dwCF8pJbgbJfhYIyYw8EXmurmHge',
   // 腾讯云COS 密钥KEY
-  SecretKey: '',
+  SecretKey: 'xQsFQOGzFPMORM8j9NOI5kDVjohOtBf3',
   // 默认存储
   DEFAULTSTORAGE: {
     Bucket: '',

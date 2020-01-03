@@ -3,6 +3,9 @@ const cos = require('../controller/cos')
 
 router.prefix('/cos')
 
+// 获取临时密钥
+router.get('/credential', cos.credential)
+
 // 查询存储桶列表
 router.get('/bucket', cos.getBucket)
 

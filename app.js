@@ -21,7 +21,7 @@ app.use(
   koaBody({
     multipart: true,
     formidable: {
-      maxFileSize: 200 * 1024 * 1024 // 设置上传文件大小最大限制 200M，默认2M
+      maxFileSize: 2000 * 1024 * 1024 // 设置上传文件大小最大限制 200M，默认2M
     }
   })
 )

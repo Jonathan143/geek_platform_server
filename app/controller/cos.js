@@ -2,6 +2,7 @@ const moment = require('moment')
 const fs = require('fs')
 
 const COS = require('cos-nodejs-sdk-v5')
+const STS = require('qcloud-cos-sts')
 const {SecretId, SecretKey, DEFAULTSTORAGE, CDNURL} = global.config
 const cos = new COS({
   SecretId,
@@ -14,6 +15,45 @@ const p = (fn, option = null) => {
     cos[fn](option, (err, data) => {
       err ? reject(err) : resolve(data)
     })
+  })
+}
+
+// 临时密钥生成
+const getCredential = () => {
+  const policy = {
+    version: '2.0',
+    statement: [
+      {
+        action: [
+          // 简单上传
+          'name/cos:PutObject',
+          'name/cos:PostObject',
+          // 分片上传
+          'name/cos:InitiateMultipartUpload',
+          'name/cos:ListMultipartUploads',
+          'name/cos:ListParts',
+          'name/cos:UploadPart',
+          'name/cos:CompleteMultipartUpload'
+        ],
+        effect: 'allow',
+        principal: {qcs: ['*']},
+        resource: ['qcs::cos:ap-guangzhou:uid/1256555015:img-1256555015/*']
+      }
+    ]
+  }
+  return new Promise((resolve, reject) => {
+    STS.getCredential(
+      {
+        secretId: SecretId,
+        secretKey: SecretKey,
+        policy
+        // durationSeconds: 1800,
+        // proxy: '',
+      },
+      (err, credential) => {
+        err ? reject(err) : resolve(credential)
+      }
+    )
   })
 }
 
@@ -108,6 +148,16 @@ module.exports = {
       Region: region,
       Key: key
     })
+      .then(data => {
+        ctx.body = data
+      })
+      .catch(error => {
+        ctx.body = error
+      })
+  },
+
+  async credential(ctx) {
+    await getCredential()
       .then(data => {
         ctx.body = data
       })
