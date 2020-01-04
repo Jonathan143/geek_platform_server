@@ -139,7 +139,7 @@ const getAllPicUrl = async ctx => {
 
     for (let i = 1; i <= total; i++) {
       srcList.push({
-        pageUrl: `${url}/${i}`,
+        pageUrl: i === 1 ? url : `${url}/${i}`,
         imageUrl: `${baseSrcList[0]}${i < 10 ? '0' + i : i}.${baseSrcList[1]}`
       })
     }
@@ -267,6 +267,8 @@ const DownloadPackage = async ctx => {
 }
 
 const downloadApi = ({imageUrl, pageUrl, responseType = 'stream'}) => {
+  console.log(imageUrl.replace(/\.com\/.+/, '.com'))
+
   return $callApi({
     api: imageUrl,
     config: {
@@ -277,7 +279,7 @@ const downloadApi = ({imageUrl, pageUrl, responseType = 'stream'}) => {
         'Accept-Encoding': 'gzip, deflate',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
         'Cache-Control': 'no-cache',
-        Host: 'i.mmzztt.com',
+        Host: imageUrl.replace(/\.com\/.+/, '.com').replace(/^http.+\/\//, ''),
         Pragma: 'no-cache',
         'Proxy-Connection': 'keep-alive',
         Referer: pageUrl,
