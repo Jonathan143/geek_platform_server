@@ -44,5 +44,6 @@ module.exports = {
   // 对象存储加速域名
   CDNURL: '',
   // 是否上传 mzitu 到腾讯云
-  ISMZITUUPLOADTOS: false
+  ISMZITUUPLOADTOS: false,
+  ISSAVETOLOCAL: true
 }

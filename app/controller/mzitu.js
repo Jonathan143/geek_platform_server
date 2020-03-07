@@ -4,7 +4,7 @@ const fs = require('fs')
 const {mkdirsSync} = require('../utils/file')
 const qs = require('querystring')
 const baseUrl = 'https://www.mzitu.com'
-const {STATICURL, BASEPATH, ISMZITUUPLOADTOS} = global.config
+const {STATICURL, BASEPATH, ISMZITUUPLOADTOS, ISSAVETOLOCAL} = global.config
 const staticUrl = `${STATICURL}/mzitu/`
 const moment = require('moment')
 const {uploadAndGetUrl} = require('./cos')
@@ -175,7 +175,8 @@ const download = async ({coverUrl, title, date, apiUrl, sourceUrl}) => {
         filePath: `${basePath}/${fileName}`,
         stream: data
       })
-    } else {
+    }
+    if (ISSAVETOLOCAL) {
       await mkdirsSync(dirPath)
       const filePath = `${dirPath}/${fileName}`
       const writeStream = fs.createWriteStream(filePath)
@@ -214,7 +215,8 @@ const downloadAll = async ctx => {
           filePath: `${fDate}/${title}/${fileName}`,
           stream: data
         })
-      } else {
+      }
+      if (ISSAVETOLOCAL) {
         const writeStream = fs.createWriteStream(filePath)
         await data.pipe(writeStream)
       }

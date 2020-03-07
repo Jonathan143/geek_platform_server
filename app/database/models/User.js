@@ -163,6 +163,9 @@ const updateUserById = async function({id, ...info}) {
         } else {
           return {error: `update ${info.username} fail. pasword is error!`}
         }
+      } else {
+        delete info.password
+        delete info.newPasswod
       }
       info.updateDateTime = formatDate()
 
@@ -176,6 +179,8 @@ const updateUserById = async function({id, ...info}) {
       result.error = `user id is not find`
     }
   } catch (error) {
+    console.log(error)
+
     result.error = `update ${info.username} fail.`
   }
 

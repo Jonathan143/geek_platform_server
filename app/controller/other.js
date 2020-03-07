@@ -25,16 +25,18 @@ module.exports = {
         }
       }
     })
-    if (global.config.ISMZITUUPLOADTOS) {
+    const {ISMZITUUPLOADTOS, ISSAVETOLOCAL, BASEPATH} = global.config
+    if (ISMZITUUPLOADTOS) {
       tosUrl = await uploadAndGetUrl({
         path: '/bing',
         filePath: `${moment(startdate).format('YYYY-MM')}/${fileName}.jpg`,
         stream: bingStream
       })
-    } else {
-      const dirPath = `${global.config.BASEPATH}/public/bing/${moment(
-        startdate
-      ).format('YYYY-MM')}`
+    }
+    if (ISSAVETOLOCAL) {
+      const dirPath = `${BASEPATH}/public/bing/${moment(startdate).format(
+        'YYYY-MM'
+      )}`
       await mkdirsSync(dirPath)
       // 创建可写流
       const bingWriteStream = fs.createWriteStream(`${dirPath}/${fileName}.jpg`)
