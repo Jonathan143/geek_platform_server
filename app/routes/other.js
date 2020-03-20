@@ -13,7 +13,7 @@ router.get('/bing', async ctx => {
 
   if (ctx.request.header['sec-fetch-dest'] === 'image') {
     ctx.body = await callApi({
-      api: url,
+      api: `https://cn.bing.com/${url}`,
       config: {responseType: 'stream'}
     })
   } else {
