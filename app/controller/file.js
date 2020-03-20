@@ -24,6 +24,17 @@ module.exports = {
     ctx.body = result
   },
 
+  async readFile(ctx) {
+    const {path} = ctx.query
+    try {
+      ctx.body = await fs.createReadStream(path)
+      ctx.type = 'image/png'
+      console.log(ctx.type)
+    } catch (error) {
+      ctx.body = '读取文件出错'
+    }
+  },
+
   async uploadFile(ctx) {
     // 上传单个文件
     const file = ctx.request.files.file // 获取上传文件
