@@ -2,6 +2,8 @@ const router = require('koa-router')()
 const callApi = require('../utils/api')
 const cheerio = require('cheerio')
 const moment = require('moment')
+const mongoose = require('mongoose')
+const BingOriginal = mongoose.model('BingOriginal')
 
 router.prefix('/other')
 
@@ -26,9 +28,10 @@ router.get('/bing', async ctx => {
   }
 })
 
-router.get('/bing/online', async ctx => {
+router.get('/bing/online/:index?', async ctx => {
   const data = await callApi({
-    api: 'https://bing.ioliu.cn/'
+    api: 'https://bing.ioliu.cn/',
+    param: {p: ctx.params.index || ''}
   })
   let list = []
   const $ = cheerio.load(data) //将html转换为可操作的节点
@@ -49,6 +52,7 @@ router.get('/bing/online', async ctx => {
         .format('YYYY-MM-DD')
     }) //输出目录页查询出来的所有链接地址
   })
+  await BingOriginal.saveBingOriginal(list)
   ctx.body = list
 })
 

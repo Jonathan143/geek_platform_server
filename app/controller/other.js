@@ -6,6 +6,29 @@ const Bing = mongoose.model('Bing')
 const fs = require('fs')
 const {mkdirsSync} = require('../utils/file')
 
+const saveBingFile = async (startdate, fileName, bingStream) => {
+  fileName = fileName.replace(/\//g, ' ')
+  let tosUrl = ''
+  const {ISMZITUUPLOADTOS, ISSAVETOLOCAL, BASEPATH} = global.config
+  if (ISMZITUUPLOADTOS) {
+    tosUrl = await uploadAndGetUrl({
+      path: '/bing',
+      filePath: `${moment(startdate).format('YYYY-MM')}/${fileName}.jpg`,
+      stream: bingStream
+    })
+  }
+  if (ISSAVETOLOCAL) {
+    const dirPath = `${BASEPATH}/public/bing/${moment(startdate).format(
+      'YYYY-MM'
+    )}`
+    await mkdirsSync(dirPath)
+    // 创建可写流
+    const bingWriteStream = fs.createWriteStream(`${dirPath}/${fileName}.jpg`)
+    bingStream.pipe(bingWriteStream)
+  }
+  return tosUrl
+}
+
 module.exports = {
   async saveBingPic() {
     const data = await $callApi({
@@ -13,8 +36,6 @@ module.exports = {
     })
     const {url, startdate, copyright} = data.images[0]
     const fileName = copyright.replace(/\//g, ' ')
-    let tosUrl = ''
-
     const bingStream = await $callApi({
       api: `https://cn.bing.com/${url}`,
       config: {
@@ -25,33 +46,16 @@ module.exports = {
         }
       }
     })
-    const {ISMZITUUPLOADTOS, ISSAVETOLOCAL, BASEPATH} = global.config
-    if (ISMZITUUPLOADTOS) {
-      tosUrl = await uploadAndGetUrl({
-        path: '/bing',
-        filePath: `${moment(startdate).format('YYYY-MM')}/${fileName}.jpg`,
-        stream: bingStream
-      })
-    }
-    if (ISSAVETOLOCAL) {
-      const dirPath = `${BASEPATH}/public/bing/${moment(startdate).format(
-        'YYYY-MM'
-      )}`
-      await mkdirsSync(dirPath)
-      // 创建可写流
-      const bingWriteStream = fs.createWriteStream(`${dirPath}/${fileName}.jpg`)
-      bingStream.pipe(bingWriteStream)
-    }
 
     const result = {
       url: `https://cn.bing.com/${url}`,
       date: moment(startdate).format('YYYY-MM-DD'),
       title: copyright,
-      tosUrl
+      tosUrl: await saveBingFile(startdate, fileName, bingStream)
     }
-    console.log(JSON.stringify(result))
 
     await Bing.saveBing(result)
     return result
-  }
+  },
+  saveBingFile
 }
