@@ -1,7 +1,10 @@
 // The fs.promises API is experimental
-const fsp = require('fs').promises
+const fs = require('fs')
+const fsp = fs.promises
 const pth = require('path')
 const os = require('os')
+const moment = require('moment')
+const {BASEPATH} = global.config
 
 const getFileType = stats => {
   return stats.isDirectory() ? 'dir' : stats.isFile() ? 'file' : 'other'
@@ -62,7 +65,7 @@ const formatFileSize = size => {
 }
 
 const mkdirsSync = async dirname => {
-  if (require('fs').existsSync(dirname)) {
+  if (fs.existsSync(dirname)) {
     return true
   }
   if (await mkdirsSync(pth.dirname(dirname))) {
@@ -71,4 +74,19 @@ const mkdirsSync = async dirname => {
   }
 }
 
-module.exports = {listDir, formatFileSize, mkdirsSync}
+const saveFileSync = async ({
+  dirPath = `${BASEPATH}/public/upload/${moment().format('YYYY-MM')}`,
+  stream,
+  fileName
+}) => {
+  if (stream && fileName) {
+    // 若无目录，创建目录
+    await mkdirsSync(dirPath)
+    const writeStream = fs.createWriteStream(`${dirPath}/${fileName}`)
+    await stream.pipe(writeStream)
+  } else {
+    console.error('stream||fileName undefinded')
+  }
+}
+
+module.exports = {listDir, formatFileSize, mkdirsSync, saveFileSync}

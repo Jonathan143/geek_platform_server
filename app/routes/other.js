@@ -4,6 +4,7 @@ const cheerio = require('cheerio')
 const moment = require('moment')
 const mongoose = require('mongoose')
 const BingOriginal = mongoose.model('BingOriginal')
+const {unDraw} = require('../controller/other')
 
 router.prefix('/other')
 
@@ -55,5 +56,14 @@ router.get('/bing/online/:index?', async ctx => {
   await BingOriginal.saveBingOriginal(list)
   ctx.body = list
 })
+
+router.get('/bing/original', async ctx => {
+  try {
+    ctx.body = await BingOriginal.fetchBingFromDataBase(ctx.query)
+  } catch (error) {
+    ctx.body = error
+  }
+})
+router.get('/draw/:page?', unDraw)
 
 module.exports = router
