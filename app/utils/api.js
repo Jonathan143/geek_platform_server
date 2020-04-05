@@ -10,7 +10,7 @@ const qs = require('qs') // 根据需求导入qs模块
  * 设置post请求头
  */
 const instance = axios.create({
-  timeout: 1000 * 12,
+  timeout: 1000 * 120,
   withCredentials: true,
   headers: {
     post: {

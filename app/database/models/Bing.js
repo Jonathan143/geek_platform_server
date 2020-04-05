@@ -11,9 +11,7 @@ const BingSchema = new BaseSchema({
 const saveBing = async function(data) {
   try {
     const bing = await this.findOne({date: data.date})
-    if (bing.id) {
-      return bing
-    }
+    if (bing) return bing
     const result = await this.create(data)
     return result
   } catch (error) {
@@ -42,7 +40,7 @@ const fetchBingFromDataBase = async function({
 
   const total = await this.find({
     $or: findBy
-  }).count()
+  }).countDocuments()
   return {
     bingList,
     total

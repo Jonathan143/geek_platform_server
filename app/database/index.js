@@ -20,8 +20,8 @@ const Role = require('./models/Role')
 const User = require('./models/User')
 require('./models/Mzitu')
 require('./models/Bing')
-require('./models/bingOriginal')
 require('./models/Illustration')
+require('./models/bingOriginal')
 
 const registerSuperAdmin = async () => {
   const count = await User.countDocuments()

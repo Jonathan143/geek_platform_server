@@ -5,7 +5,7 @@ const mongoose = require('mongoose')
 const Bing = mongoose.model('Bing')
 const Illustration = mongoose.model('Illustration')
 const fs = require('fs')
-const {mkdirsSync, saveFileSync} = require('../utils/file')
+const {mkdirsSync} = require('../utils/file')
 
 const saveBingFile = async (startdate, fileName, bingStream) => {
   fileName = fileName.replace(/\//g, ' ')
@@ -38,22 +38,8 @@ const unDraw = async ctx => {
         page: ctx.params.page || 0
       }
     })
-    for (const item of list.illustrations) {
-      const urls = item.image.split('/')
-      console.log(item.title)
-
-      const stream = await $callApi({
-        api: item.image,
-        config: {
-          responseType: 'stream'
-        }
-      })
-      await saveFileSync({
-        stream,
-        fileName: urls.splice(urls.length - 1, 1).toString()
-      })
-    }
-    // await Illustration.saveIllustration(list)
+    // 保存文件&数据库
+    await Illustration.saveIllustration(list.illustrations)
     ctx.body = list
   } catch (error) {
     ctx.body = error

@@ -89,7 +89,7 @@ const fetchMziFromDataBase = async function({
 
   const total = await this.find({
     $or: findBy
-  }).count()
+  }).countDocuments()
   return {
     mziList,
     total

@@ -4,7 +4,9 @@ const fsp = fs.promises
 const pth = require('path')
 const os = require('os')
 const moment = require('moment')
-const {BASEPATH} = global.config
+const {BASEPATH, ISMZITUUPLOADTOS, ISSAVETOLOCAL} = global.config
+const $callApi = require('./api')
+const {uploadAndGetUrl} = require('../controller/cos')
 
 const getFileType = stats => {
   return stats.isDirectory() ? 'dir' : stats.isFile() ? 'file' : 'other'
@@ -74,13 +76,23 @@ const mkdirsSync = async dirname => {
   }
 }
 
+/**
+ *
+ * @param {String} basePath 基本路径 默认为/public
+ * @param {String} path 文件保存路径
+ * @param {stream} stream 文件流
+ * @param {String} fileName 文件名
+ */
 const saveFileSync = async ({
-  dirPath = `${BASEPATH}/public/upload/${moment().format('YYYY-MM')}`,
+  basePath = `${BASEPATH}/public/`,
+  path = moment().format('YYYY-MM'),
   stream,
   fileName
 }) => {
   if (stream && fileName) {
     // 若无目录，创建目录
+    const dirPath = basePath + path
+    console.log(`saveFileSync 保存地址 -- ${dirPath}`)
     await mkdirsSync(dirPath)
     const writeStream = fs.createWriteStream(`${dirPath}/${fileName}`)
     await stream.pipe(writeStream)
@@ -89,4 +101,43 @@ const saveFileSync = async ({
   }
 }
 
-module.exports = {listDir, formatFileSize, mkdirsSync, saveFileSync}
+/**
+ *
+ * @param {String} url
+ * @param {Object} config basePath,path,fileName
+ */
+const saveNetworkFileSync = async (url, config) => {
+  try {
+    const stream = await $callApi({
+      api: url,
+      config: {
+        responseType: 'stream'
+      }
+    })
+    let tosUrl = ''
+    if (ISMZITUUPLOADTOS) {
+      tosUrl = await uploadAndGetUrl({
+        filePath: config.fileName,
+        path: config.path,
+        stream
+      })
+    }
+    if (ISSAVETOLOCAL) {
+      await saveFileSync({
+        stream,
+        ...config
+      })
+    }
+    return {code: 200, tosUrl, _id: config._id || ''}
+  } catch (error) {
+    return Promise.reject(error)
+  }
+}
+
+module.exports = {
+  listDir,
+  formatFileSize,
+  mkdirsSync,
+  saveFileSync,
+  saveNetworkFileSync
+}

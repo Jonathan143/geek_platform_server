@@ -54,7 +54,7 @@ const fetchBingFromDataBase = async function({
 
   const total = await this.find({
     $or: findBy
-  }).count()
+  }).countDocuments()
   return {
     bingList,
     total
