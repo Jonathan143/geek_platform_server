@@ -4,7 +4,7 @@ const cheerio = require('cheerio')
 const moment = require('moment')
 const mongoose = require('mongoose')
 const BingOriginal = mongoose.model('BingOriginal')
-const {unDraw} = require('../controller/other')
+const {unDraw, pullUnDraw} = require('../controller/other')
 
 router.prefix('/other')
 
@@ -64,6 +64,7 @@ router.get('/bing/original', async ctx => {
     ctx.body = error
   }
 })
-router.get('/draw/:page?', unDraw)
+router.get('/draw', unDraw)
+router.get('/draw/pull/:page?', pullUnDraw)
 
 module.exports = router

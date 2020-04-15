@@ -59,7 +59,7 @@ const fetchIllustrationFromDataBase = async function({
   pageSize = Number(pageSize)
   findBy = findBy.length ? findBy : [{}]
 
-  const bingList = await this.find({
+  const list = await this.find({
     $or: findBy
   })
     .sort({_id: -1})
@@ -70,7 +70,7 @@ const fetchIllustrationFromDataBase = async function({
     $or: findBy
   }).countDocuments()
   return {
-    bingList,
+    list,
     total
   }
 }

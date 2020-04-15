@@ -30,7 +30,7 @@ const saveBingFile = async (startdate, fileName, bingStream) => {
   return tosUrl
 }
 
-const unDraw = async ctx => {
+const pullUnDraw = async ctx => {
   try {
     const list = await $callApi({
       api: 'https://undraw.co/api/illustrations',
@@ -44,6 +44,10 @@ const unDraw = async ctx => {
   } catch (error) {
     ctx.body = error
   }
+}
+
+const unDraw = async ctx => {
+  ctx.body = await Illustration.fetchIllustrationFromDataBase(ctx.query)
 }
 
 module.exports = {
@@ -75,5 +79,6 @@ module.exports = {
     return result
   },
   saveBingFile,
-  unDraw
+  unDraw,
+  pullUnDraw
 }
