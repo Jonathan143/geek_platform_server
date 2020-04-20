@@ -5,7 +5,7 @@ const {mkdirsSync} = require('../utils/file')
 const qs = require('querystring')
 const baseUrl = 'https://www.mzitu.com'
 const {STATICURL, BASEPATH, ISMZITUUPLOADTOS, ISSAVETOLOCAL} = global.config
-const staticUrl = `${STATICURL}/mzitu/`
+const staticUrl = `/mzitu/`
 const moment = require('moment')
 const {uploadAndGetUrl} = require('./cos')
 const mongoose = require('mongoose')
@@ -102,13 +102,16 @@ const getCoverList = async (data, apiUrl) => {
           .find($('.time'))
           .text()
       }
-
       list.push(obj) //输出目录页查询出来的所有链接地址
     })
   }
   for (const i of list) {
-    const bd = await download({apiUrl, ...i})
-    Object.assign(i, bd)
+    const result = await download({apiUrl, ...i})
+    const coverUrl = result.coverUrl
+    result.coverUrl = coverUrl.includes('http')
+      ? coverUrl
+      : STATICURL + coverUrl
+    Object.assign(i, result)
   }
   return list
 }
@@ -269,8 +272,6 @@ const DownloadPackage = async ctx => {
 }
 
 const downloadApi = ({imageUrl, pageUrl, responseType = 'stream'}) => {
-  console.log(imageUrl.replace(/\.com\/.+/, '.com'))
-
   return $callApi({
     api: imageUrl,
     config: {
@@ -281,7 +282,7 @@ const downloadApi = ({imageUrl, pageUrl, responseType = 'stream'}) => {
         'Accept-Encoding': 'gzip, deflate',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
         'Cache-Control': 'no-cache',
-        Host: imageUrl.replace(/\.com\/.+/, '.com').replace(/^http.+\/\//, ''),
+        // Host: imageUrl.replace(/\.com\/.+/, '.com').replace(/^http.+\/\//, ''),
         Pragma: 'no-cache',
         'Proxy-Connection': 'keep-alive',
         Referer: pageUrl,
@@ -294,7 +295,17 @@ const downloadApi = ({imageUrl, pageUrl, responseType = 'stream'}) => {
 }
 
 const fetchMziFromDataBase = async ctx => {
-  ctx.body = await Mzitu.fetchMziFromDataBase(ctx.query)
+  const list = await Mzitu.fetchMziFromDataBase(ctx.query)
+  list.mziList.forEach(item => {
+    const coverUrl = item.coverUrl
+    item.coverUrl = coverUrl.includes('http') ? coverUrl : STATICURL + coverUrl
+    if (item.downloadDateTime) {
+      item.children = item.children.map(url =>
+        url.includes('http') ? url : STATICURL + url
+      )
+    }
+  })
+  ctx.body = list
 }
 
 module.exports = {
