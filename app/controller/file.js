@@ -3,6 +3,7 @@ const fs = require('fs')
 const moment = require('moment')
 const {STATICURL, BASEPATH} = global.config
 const os = require('os')
+const mime = require('mime-types')
 
 module.exports = {
   async getFile(ctx) {
@@ -27,9 +28,14 @@ module.exports = {
   async readFile(ctx) {
     const {path} = ctx.query
     try {
+      for (const url of ['conf', 'config']) {
+        if (path.includes(url)) {
+          ctx.body = 'Insufficient permissions'
+          return
+        }
+      }
       ctx.body = await fs.createReadStream(path)
-      ctx.type = 'image/png'
-      console.log(ctx.type)
+      ctx.type = mime.lookup(path)
     } catch (error) {
       ctx.body = '读取文件出错'
     }
