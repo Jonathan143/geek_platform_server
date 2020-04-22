@@ -39,8 +39,8 @@ const pullUnDraw = async ctx => {
       }
     })
     // 保存文件&数据库
-    await Illustration.saveIllustration(list.illustrations)
-    ctx.body = list
+    const pullCount = await Illustration.saveIllustration(list.illustrations)
+    ctx.body = {...list, pullCount}
   } catch (error) {
     ctx.body = error
   }

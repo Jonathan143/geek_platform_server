@@ -41,6 +41,7 @@ const saveIllustration = async function(list) {
       }
       console.log(result)
     }
+    return filterList.length
   } catch (error) {
     console.log(error)
     return {error}
