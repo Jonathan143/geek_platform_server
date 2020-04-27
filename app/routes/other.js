@@ -13,15 +13,13 @@ router.get('/bing', async ctx => {
     api: 'http://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1'
   })
   const {url, enddate, startdate, copyright} = data.images[0]
-
+  const bingUrl = `https://cn.bing.com/${url}`
   if (ctx.request.header['sec-fetch-dest'] === 'image') {
-    ctx.body = await callApi({
-      api: `https://cn.bing.com/${url}`,
-      config: {responseType: 'stream'}
-    })
+    ctx.status = 302
+    ctx.redirect(bingUrl)
   } else {
     ctx.body = {
-      url: `https://cn.bing.com/${url}`,
+      url: bingUrl,
       enddate,
       startdate,
       title: copyright
