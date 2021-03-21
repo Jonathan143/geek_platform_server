@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 mongoose.Promise = global.Promise
 
 mongoose.connect(`${global.config.MONGODB_HOST}/geek_platform`, {
+  authSource: 'admin',
   useNewUrlParser: true,
   useFindAndModify: false,
   useUnifiedTopology: true
