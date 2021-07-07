@@ -6,6 +6,7 @@ whitelist = [
   {path: '/other/bing$', method: 'get'},
   {path: '/user/login$', method: 'post'},
   {path: '/file/read.+', method: 'get'},
+  {path: '/wechat$', method: 'get'},
   {path: '/user/register$', method: 'post'},
   {path: '/update-code$', method: 'post'}
 ]

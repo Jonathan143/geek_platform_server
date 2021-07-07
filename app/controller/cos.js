@@ -1,4 +1,4 @@
-const moment = require('moment')
+const dayjs = require('dayjs')
 const fs = require('fs')
 
 const COS = require('cos-nodejs-sdk-v5')
@@ -92,7 +92,7 @@ module.exports = {
     } = ctx.request.body
     // 上传单个文件
     const file = ctx.request.files.file // 获取上传文件
-    const filePath = `${moment().format('YYYY-MM')}/${moment().format('DD')}/${
+    const filePath = `${dayjs().format('YYYY-MM')}/${dayjs().format('DD')}/${
       file.name
     }`
 

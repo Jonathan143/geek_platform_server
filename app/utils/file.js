@@ -3,7 +3,7 @@ const fs = require('fs')
 const fsp = fs.promises
 const pth = require('path')
 const os = require('os')
-const moment = require('moment')
+const dayjs = require('dayjs')
 const {BASEPATH, ISMZITUUPLOADTOS, ISSAVETOLOCAL} = global.config
 const $callApi = require('./api')
 const {uploadAndGetUrl} = require('../controller/cos')
@@ -85,7 +85,7 @@ const mkdirsSync = async dirname => {
  */
 const saveFileSync = async ({
   basePath = `${BASEPATH}/public/`,
-  path = moment().format('YYYY-MM'),
+  path = dayjs().format('YYYY-MM'),
   stream,
   fileName
 }) => {

@@ -23,6 +23,7 @@ require('./models/Mzitu')
 require('./models/Bing')
 require('./models/Illustration')
 require('./models/bingOriginal')
+require('./models/Schedule')
 
 const registerSuperAdmin = async () => {
   const count = await User.countDocuments()

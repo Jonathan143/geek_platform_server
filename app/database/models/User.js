@@ -1,11 +1,11 @@
 const BaseSchema = require('./BaseSchema')
 const mongoose = require('mongoose'),
   ObjectId = mongoose.Types.ObjectId
-const moment = require('moment')
+const dayjs = require('dayjs')
 const encryption = require('../../utils/encryption')
 const jwt = require('jsonwebtoken')
 const formatDate = () => {
-  return moment().format('YYYY-MM-DD HH:mm:ss')
+  return dayjs().format('YYYY-MM-DD HH:mm:ss')
 }
 
 const UserSchema = new BaseSchema({

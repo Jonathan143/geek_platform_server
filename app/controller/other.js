@@ -1,4 +1,4 @@
-const moment = require('moment')
+const dayjs = require('dayjs')
 const {uploadAndGetUrl} = require('./cos')
 const $callApi = require('../utils/api')
 const mongoose = require('mongoose')
@@ -14,12 +14,12 @@ const saveBingFile = async (startdate, fileName, bingStream) => {
   if (ISMZITUUPLOADTOS) {
     tosUrl = await uploadAndGetUrl({
       path: '/bing',
-      filePath: `${moment(startdate).format('YYYY-MM')}/${fileName}.jpg`,
+      filePath: `${dayjs(startdate).format('YYYY-MM')}/${fileName}.jpg`,
       stream: bingStream
     })
   }
   if (ISSAVETOLOCAL) {
-    const dirPath = `${BASEPATH}/public/bing/${moment(startdate).format(
+    const dirPath = `${BASEPATH}/public/bing/${dayjs(startdate).format(
       'YYYY-MM'
     )}`
     await mkdirsSync(dirPath)
@@ -70,7 +70,7 @@ module.exports = {
 
     const result = {
       url: `https://cn.bing.com/${url}`,
-      date: moment(startdate).format('YYYY-MM-DD'),
+      date: dayjs(startdate).format('YYYY-MM-DD'),
       title: copyright,
       tosUrl: await saveBingFile(startdate, fileName, bingStream)
     }

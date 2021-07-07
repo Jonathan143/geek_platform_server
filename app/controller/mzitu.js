@@ -6,7 +6,7 @@ const qs = require('querystring')
 const baseUrl = 'https://www.mzitu.com'
 const {STATICURL, BASEPATH, ISMZITUUPLOADTOS, ISSAVETOLOCAL} = global.config
 const staticUrl = `/mzitu/`
-const moment = require('moment')
+const dayjs = require('dayjs')
 const {uploadAndGetUrl} = require('./cos')
 const mongoose = require('mongoose')
 const Mzitu = mongoose.model('Mzitu')
@@ -158,7 +158,7 @@ const setPage = page =>
   page === undefined || page === '1' ? '' : `/page/${page}/`
 
 const formatDate = date => {
-  return moment(date).format('YYYY-MM')
+  return dayjs(date).format('YYYY-MM')
 }
 
 const download = async ({coverUrl, title, date, apiUrl, sourceUrl}) => {

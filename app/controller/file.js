@@ -1,6 +1,6 @@
 const {mkdirsSync, listDir} = require('../utils/file')
 const fs = require('fs')
-const moment = require('moment')
+const dayjs = require('dayjs')
 const {STATICURL, BASEPATH} = global.config
 const os = require('os')
 const mime = require('mime-types')
@@ -46,7 +46,7 @@ module.exports = {
     const file = ctx.request.files.file // 获取上传文件
     // 创建可读流
     const reader = fs.createReadStream(file.path)
-    const dirPath = `/public/upload/${moment().format('YYYY-MM')}`
+    const dirPath = `/public/upload/${dayjs().format('YYYY-MM')}`
     // 若无目录，创建目录
     await mkdirsSync(BASEPATH + dirPath)
     const filePath = `.${dirPath}/${file.name}`

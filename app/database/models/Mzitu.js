@@ -1,6 +1,6 @@
 const BaseSchema = require('./BaseSchema')
 const mongoose = require('mongoose')
-const moment = require('moment')
+const dayjs = require('dayjs')
 
 const MzituSchema = new BaseSchema({
   title: String,
@@ -20,7 +20,7 @@ const MzituSchema = new BaseSchema({
   },
   loadDate: {
     type: String,
-    default: moment().format('YYYY-MM-DD HH:mm:ss')
+    default: dayjs().format('YYYY-MM-DD HH:mm:ss')
   },
   updateDateTime: {
     type: String,
@@ -33,7 +33,7 @@ const MzituSchema = new BaseSchema({
   children: []
 })
 
-const getTime = () => moment().format('YYYY-MM-DD HH:mm:ss')
+const getTime = () => dayjs().format('YYYY-MM-DD HH:mm:ss')
 
 const addCover = async function({title, sourceUrl, coverUrl, date}) {
   const data = await this.create({title, sourceUrl, coverUrl, date})

@@ -45,5 +45,15 @@ module.exports = {
   CDNURL: '',
   // 是否上传 mzitu 到腾讯云
   ISMZITUUPLOADTOS: false,
-  ISSAVETOLOCAL: true
+  ISSAVETOLOCAL: true,
+  // 邮件服务配置
+  emailServe: {
+    host: '',
+    port: 2525,
+    secure: true,
+    auth: {
+      user: '',
+      pass: ''
+    } // 发送者邮箱账户SMTP授权码
+  }
 }
