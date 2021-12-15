@@ -24,6 +24,7 @@ require('./models/Bing')
 require('./models/Illustration')
 require('./models/bingOriginal')
 require('./models/Schedule')
+require('./models/Browser')
 
 const registerSuperAdmin = async () => {
   const count = await User.countDocuments()

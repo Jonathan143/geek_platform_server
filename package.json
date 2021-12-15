@@ -34,7 +34,8 @@
     "pm2": "^4.1.2",
     "qcloud-cos-sts": "^3.0.2",
     "sha1": "^1.1.1",
-    "simple-git": "^2.40.0"
+    "simple-git": "^2.40.0",
+    "ua-parser-js": "^1.0.2"
   },
   "devDependencies": {
     "eslint": "^6.2.2",
