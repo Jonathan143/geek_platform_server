@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 whitelist = [
   {path: '/$', method: 'get'},
   {path: '/ua', method: 'get'},
+  {path: '/browser/*', method: 'get'},
   {path: '/other/bing$', method: 'get'},
   {path: '/user/login$', method: 'post'},
   {path: '/file/read.+', method: 'get'},
