@@ -44,7 +44,8 @@
     "sha1": "^1.1.1",
     "simple-git": "^2.40.0",
     "ua-parser-js": "^1.0.2",
-    "wechat-jssdk": "^5.0.8"
+    "wechat-jssdk": "^5.0.8",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "eslint": "^6.2.2",
