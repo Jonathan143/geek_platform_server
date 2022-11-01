@@ -55,5 +55,8 @@ module.exports = {
       user: '',
       pass: ''
     } // 发送者邮箱账户SMTP授权码
-  }
+  },
+
+  // 企业微信机器人
+  WXWORK_BOT: ''
 }

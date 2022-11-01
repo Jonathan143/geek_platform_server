@@ -45,8 +45,10 @@ app.use(apiError)
 // routes
 require('./routesLoader')(app, __dirname + '/app/routes')
 
-const {reptileBingPic} = require('./app/schedules/bing')
+const {reptileBingPic, HPVNotify} = require('./app/schedules/bing')
 reptileBingPic()
+HPVNotify()
+
 const {SERVER_PORT} = global.config
 
 app.listen(SERVER_PORT, () => {

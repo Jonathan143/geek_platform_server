@@ -5,6 +5,7 @@ const dayjs = require('dayjs')
 const mongoose = require('mongoose')
 const BingOriginal = mongoose.model('BingOriginal')
 const {unDraw, pullUnDraw} = require('../controller/other')
+const {reFindHomePage} = require('../controller/hpv-notify')
 
 router.prefix('/other')
 
@@ -84,6 +85,10 @@ router.get('/send-email', async ctx => {
     )
   }
   ctx.body = 'success'
+})
+
+router.get('/hpv-notify', async ctx => {
+  ctx.body = await reFindHomePage(false, !ctx.query.notify)
 })
 
 module.exports = router
