@@ -12,7 +12,7 @@ module.exports = {
   },
 
   HPVNotify() {
-    schedule.scheduleJob('10 9 * * *', () => {
+    schedule.scheduleJob('30 8 * * *', () => {
       console.log('执行任务-----HPV通知')
       reFindHomePage(false, false)
     })
