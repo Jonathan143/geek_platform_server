@@ -62,8 +62,12 @@ const reFindHomePage = async (initScheduleJob = false, disnotify = false) => {
     .reduce((a, b) => a.concat(Array.isArray(b) ? b : [b]), [])
     .join('')
     .split('\n')
-    .filter(item => item.includes('不限户籍'))
-    .map(i => i.split(/\s/))
+    .filter(
+      item =>
+        ['不限户籍', '不确定是否限户籍'].some(i => item.includes(i)) &&
+        !['约二、三针', '约二三针'].some(i => item.includes(i))
+    )
+    .map(i => i.split(','))
 
   let notifyContent = ''
   const newList = list.map(item => {
