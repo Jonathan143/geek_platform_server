@@ -78,7 +78,7 @@ const reFindHomePage = async (initScheduleJob = false, disnotify = false) => {
 
     const time = `2022-${month}-${day} ${
       date.includes('早上') ? (+hour < 10 ? '0' + hour : hour) : +hour + 12
-    }:${date.includes('点半') ? 30 : minute}:00`
+    }:${date.includes('点半') ? 30 : minute || 0}:00`
 
     notifyContent += `${date}\n${info + ''}\n\n`
 
